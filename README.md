@@ -23,8 +23,9 @@ GPLv3
 Screenshots
 -----------
 
-<img src="http://i.imgur.com/yAiKjYi.jpg" width="45%" style="float: left"/>
-<img src="http://i.imgur.com/KlNJKaz.png" width="45%" style="float: left"/>
+<img src="http://i.imgur.com/yAiKjYi.jpg" width="45%"/>
+&nbsp;&nbsp;
+<img src="http://i.imgur.com/KlNJKaz.png" width="45%"/>
 
   [Volley]: https://android.googlesource.com/platform/frameworks/volley/
   [XBMC-jsonrpclib-android]: https://github.com/freezy/xbmc-jsonrpclib-android
