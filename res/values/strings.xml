@@ -3,8 +3,8 @@
 
     <string name="app_name">XBMC Remote</string>
     <string name="action_settings">Settings</string>
-    <string name="title_section1">Movies</string>
-    <string name="title_section2">TV</string>
-    <string name="title_section3">Music</string>
+    <string name="action_movies">Movies</string>
+    <string name="action_tv">TV</string>
+    <string name="action_music">Music</string>
 
 </resources>

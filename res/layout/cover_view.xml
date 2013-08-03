@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+	android:layout_height="16dp">
+
+    <com.android.volley.toolbox.NetworkImageView
+		android:scaleType="centerCrop"
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent"
+		android:id="@+id/cover_view_background"
+    />
+
+    <TextView
+		android:textColor="@android:color/white"
+		android:textStyle="bold"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:background="#AA000000"
+		android:id="@+id/cover_view_title"
+		android:layout_alignParentBottom="true"
+		android:padding="4dp"
+		android:ellipsize="end"
+		android:maxLines="1"
+		android:scrollHorizontally="true"
+    />
+</merge>

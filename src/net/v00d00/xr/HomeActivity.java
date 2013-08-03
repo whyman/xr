@@ -1,50 +1,86 @@
 package net.v00d00.xr;
 
-import java.util.Locale;
+import java.io.File;
+import java.io.IOException;
 
+import net.v00d00.xr.fragment.AlbumFragment;
+import net.v00d00.xr.fragment.AlbumListFragment;
+import net.v00d00.xr.fragment.LoadableFragment;
+
+import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
+import org.xbmc.android.jsonrpc.io.ConnectionManager;
+
+import android.app.ActionBar;
+import android.content.Context;
+import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
-public class HomeActivity extends FragmentActivity {
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
-	/**
-	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. We use a
-	 * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
-	 * will keep every loaded fragment in memory. If this becomes too memory
-	 * intensive, it may be best to switch to a
-	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-	 */
-	SectionsPagerAdapter mSectionsPagerAdapter;
+public class HomeActivity extends SlidingFragmentActivity implements LoadableFragment.ConnectionManagerProvider, AlbumListFragment.Provider {
 
-	/**
-	 * The {@link ViewPager} that will host the section contents.
-	 */
-	ViewPager mViewPager;
+	LinearLayout layout;
+	JsonRPC jsonrpc;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_home);
+		setContentView(R.layout.view_pager);
 
-		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the app.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
+		layout = (LinearLayout) findViewById(R.id.pager);
 
-		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+		// set the Behind View
+		setBehindContentView(R.layout.side_menu);
+		setSlidingActionBarEnabled(true);
 
+		// customize the SlidingMenu
+		SlidingMenu sm = getSlidingMenu();
+		sm.setBehindWidthRes(R.dimen.side_menu_width);
+		sm.setFadeEnabled(true);
+		sm.setFadeDegree(0.8f);
+		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+		sm.setBehindScrollScale(0.5f);
+		sm.setShadowDrawable(R.drawable.shadow);
+		sm.setShadowWidthRes(R.dimen.side_menu_shadow_width);
+
+		ActionBar ab = getActionBar();
+		if (ab != null){
+			ab.setDisplayHomeAsUpEnabled(true);
+			ab.setDisplayShowTitleEnabled(false);
+		}
+
+		jsonrpc = new JsonRPC(getApplicationContext());
+
+		try {
+			File httpCacheDir = new File(getApplication().getCacheDir(), "http");
+			long httpCacheSize = 50 * 1024 * 1024; // 50 MiB
+			HttpResponseCache.install(httpCacheDir, httpCacheSize);
+		} catch (IOException e) {
+			Log.i("XR", "HTTP response cache installation failed:" + e);
+		}
+
+		showAlbums();
+	}
+
+	@Override
+	protected void onStop() {
+		HttpResponseCache cache = HttpResponseCache.getInstalled();
+		if (cache != null) {
+			cache.flush();
+		}
+		super.onStop();
 	}
 
 	@Override
@@ -54,74 +90,45 @@ public class HomeActivity extends FragmentActivity {
 		return true;
 	}
 
-	/**
-	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages.
-	 */
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			toggle();
+			return true;
+        case R.id.action_music:
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
 		}
+    }
 
-		@Override
-		public Fragment getItem(int position) {
-			// getItem is called to instantiate the fragment for the given page.
-			// Return a DummySectionFragment (defined as a static inner class
-			// below) with the page number as its lone argument.
-			Fragment fragment = new DummySectionFragment();
-			Bundle args = new Bundle();
-			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		@Override
-		public int getCount() {
-			// Show 3 total pages.
-			return 3;
-		}
-
-		@Override
-		public CharSequence getPageTitle(int position) {
-			Locale l = Locale.getDefault();
-			switch (position) {
-			case 0:
-				return getString(R.string.title_section1).toUpperCase(l);
-			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
-			case 2:
-				return getString(R.string.title_section3).toUpperCase(l);
-			}
-			return null;
-		}
+	@Override
+	public ConnectionManager getConnectionManager() {
+		return jsonrpc.getConnectionManager();
 	}
 
-	/**
-	 * A dummy fragment representing a section of the app, but that simply
-	 * displays dummy text.
-	 */
-	public static class DummySectionFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		public static final String ARG_SECTION_NUMBER = "section_number";
+	private void replaceFragment(Fragment f) {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.replace(R.id.pager, f);
+		fragmentTransaction.addToBackStack(null);
+		fragmentTransaction.commit();
+	}
 
-		public DummySectionFragment() {
-		}
+	private void showAlbums() {
+		AlbumListFragment f = new AlbumListFragment();
+		f.setConnectionManager(getConnectionManager());
+		f.setProvider(this);
+		replaceFragment(f);
+	}
 
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_home_dummy,
-					container, false);
-			TextView dummyTextView = (TextView) rootView
-					.findViewById(R.id.section_label);
-			dummyTextView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
-			return rootView;
-		}
+	@Override
+	public void showAlbumListing(AlbumDetail album) {
+		AlbumFragment newFragment = new AlbumFragment();
+		newFragment.setConnectionManager(getConnectionManager());
+		newFragment.setAlbum(album);
+		replaceFragment(newFragment);
 	}
 
 }
