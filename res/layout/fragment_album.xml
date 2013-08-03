@@ -11,7 +11,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1">
 
-	    <com.android.volley.toolbox.NetworkImageView
+	    <ImageView
 	        android:id="@+id/album_cover"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
@@ -53,16 +53,16 @@
 	        />
 
     	<TextView
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:text="Track List"
-	        android:textAllCaps="true"
-	        android:id="@+id/_album_track_list_title"
-	        android:textColor="@android:color/holo_blue_light"
-	        android:paddingLeft="16dp"
-	        android:layout_marginTop="8dp"
-	        android:layout_alignParentBottom="true"
-	        android:background="@color/tint40"
+        	android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="Track List"
+			android:textAllCaps="true"
+			android:id="@+id/_album_track_list_title"
+			android:textColor="@android:color/holo_blue_light"
+			android:paddingLeft="16dp"
+			android:layout_marginTop="8dp"
+			android:layout_alignParentBottom="true"
+			android:background="@color/tint40"
 	        />
 
    </RelativeLayout>
@@ -78,6 +78,8 @@
 		    android:layout_height="fill_parent"
 		    android:layout_gravity="bottom"
 		    android:gravity="center"
+		    android:fastScrollAlwaysVisible="true"
+        	android:fastScrollEnabled="true"
 		    android:horizontalSpacing="1dp"
 		    android:isScrollContainer="true"
 		    android:verticalSpacing="1dp"

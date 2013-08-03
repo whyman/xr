@@ -39,6 +39,7 @@ import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,6 +53,7 @@ import android.widget.Toast;
 
 public class AlbumListFragment extends Fragment implements LoadableFragment {
 
+	private Parcelable state;
 	private GridView gridView;
 	private ConnectionManager cm;
 	private AlbumListAdapter adapter;
@@ -65,7 +67,8 @@ public class AlbumListFragment extends Fragment implements LoadableFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		adapter = new AlbumListAdapter(getActivity(), new ArrayList<AlbumDetail>());
+		if (adapter == null)
+			adapter = new AlbumListAdapter(getActivity(), new ArrayList<AlbumDetail>());
 
 		View rootView = inflater.inflate(R.layout.fragment_albums, container, false);
 		gridView = (GridView) rootView.findViewById(R.id.album_grid);
@@ -86,7 +89,9 @@ public class AlbumListFragment extends Fragment implements LoadableFragment {
 				provider.showAlbumListing(detail);
 			}
 		});
-		load();
+
+		if (state == null)
+			load();
 		return rootView;
 	}
 
@@ -151,6 +156,24 @@ public class AlbumListFragment extends Fragment implements LoadableFragment {
 		}
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		state = gridView.onSaveInstanceState();
+	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (adapter != null) {
+			gridView.setAdapter(adapter);
+		}
+		if (state != null) {
+			Log.i("state", "not null!");
+			gridView.onRestoreInstanceState(state);
+		} else {
+			Log.i("state", "NULL!");
+		}
+	}
 
 }

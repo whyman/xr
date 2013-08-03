@@ -20,25 +20,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package net.v00d00.xr;
 
-import android.app.Application;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import android.content.Context;
+import android.util.Base64;
+import android.util.Log;
 
-import com.squareup.picasso.Picasso;
+import com.squareup.picasso.UrlConnectionLoader;
 
-public class XRApplication extends Application {
-    private Picasso picasso;
+public class BasicAuthLoader extends UrlConnectionLoader {
 
-    @Override
-    public void onCreate() {
-    	super.onCreate();
-    	picasso = new Picasso.Builder(getApplicationContext()).loader(new BasicAuthLoader(getApplicationContext())).build();
+	public BasicAuthLoader(Context context) {
+		super(context);
+	}
+
+	@Override
+    protected HttpURLConnection openConnection(String path) throws IOException {
+		Log.d("Loader", "called");
+        HttpURLConnection c = (HttpURLConnection)  new URL(path).openConnection();
+        c.setRequestProperty("Authorization", "Basic " +
+                Base64.encodeToString("xbmc:xbmc".getBytes(), Base64.NO_WRAP));
+        return c;
     }
 
-    public Picasso getPicasso() {
-    	return picasso;
-    }
-
-    public static XRApplication getApplication(Context context) {
-        return (XRApplication) context.getApplicationContext();
-    }
 }

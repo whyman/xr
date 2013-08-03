@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
 	android:layout_height="16dp">
 
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
 		android:scaleType="centerCrop"
 		android:layout_height="fill_parent"
 		android:layout_width="fill_parent"

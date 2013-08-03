@@ -33,17 +33,15 @@ import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary.GetSongs.FilterAlbumId;
 import org.xbmc.android.jsonrpc.api.call.Player;
-import org.xbmc.android.jsonrpc.api.call.Playlist;
-import org.xbmc.android.jsonrpc.api.call.Playlist.Add;
-import org.xbmc.android.jsonrpc.api.call.Playlist.GetPlaylists.GetPlaylistsResult;
 import org.xbmc.android.jsonrpc.api.model.AudioModel;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
-import org.xbmc.android.jsonrpc.api.model.PlaylistModel;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.Songid;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
+
+import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -55,17 +53,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.toolbox.NetworkImageView;
 
 public class AlbumFragment extends Fragment implements LoadableFragment {
 
 	private View rootView;
 	private ListView trackList;
-	private NetworkImageView image;
+	private ImageView image;
 	private ConnectionManager cm;
 	private AlbumAdapter adapter;
 	private AlbumDetail album;
@@ -116,7 +113,7 @@ public class AlbumFragment extends Fragment implements LoadableFragment {
 
 		rootView = inflater.inflate(R.layout.fragment_album, container, false);
 		trackList = (ListView) rootView.findViewById(R.id.track_list);
-		image = (NetworkImageView) rootView.findViewById(R.id.album_cover);
+		image = (ImageView) rootView.findViewById(R.id.album_cover);
 		name = (TextView) rootView.findViewById(R.id.album_name);
 		artist = (TextView) rootView.findViewById(R.id.album_artist);
 
@@ -133,26 +130,18 @@ public class AlbumFragment extends Fragment implements LoadableFragment {
 				Toast toast = Toast.makeText(context, text, duration);
 				toast.show();
 
-				cm.call(new Playlist.GetPlaylists(), new ApiCallback<GetPlaylistsResult>() {
+				cm.call(new Player.Open(new Item(new Songid(detail.songid))), new ApiCallback<String>() {
 
 					@Override
-					public void onResponse(AbstractCall<GetPlaylistsResult> call) {
-						ArrayList<GetPlaylistsResult> playlists = call.getResults();
-						for (GetPlaylistsResult p : playlists) {
-							if (p.type.equals("audio")) {
-								//cm.call(new Playlist.Clear(p.playlistid), null);
-								//cm.call(new Playlist.Add(p.playlistid, new Item(new Songid(detail.songid))), null);
-								cm.call(new Player.Open(new Item(new Songid(detail.songid))), null);
-
-							}
-						}
+					public void onResponse(AbstractCall<String> call) {
+						// TODO Auto-generated method stub
 
 					}
 
 					@Override
 					public void onError(int code, String message, String hint) {
 						// TODO Auto-generated method stub
-						Log.e("PLAY", "Failed: " + message);
+
 					}
 				});
 			}
@@ -163,8 +152,10 @@ public class AlbumFragment extends Fragment implements LoadableFragment {
 		name.setText(album.title);
 
 		try {
-			image.setImageUrl("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"), XRApplication.getApplication(getActivity()).getImageLoader());
-			//XRApplication.getApplication(getActivity()).getImageLoader().get("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"), this);
+			XRApplication.getApplication(getActivity()).getPicasso()
+				.load("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"))
+				.placeholder(R.drawable.logo)
+				.into(image);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
