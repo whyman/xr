@@ -1,6 +1,6 @@
 XR
 =========
-XR is an effort to build a XBMC using modern android technologies.
+XR is an effort to build a XBMC Remote app using modern android technologies.
 
 It is not there yet. Pull requests are both welcomed and encouraged.
 
@@ -19,6 +19,12 @@ License
 GPLv3
 
 *Free Software, Fuck Yeah!*
+
+Screenshots
+-----------
+
+<img src="http://i.imgur.com/yAiKjYi.jpg" width="45%" style="float: left"/>
+<img src="http://i.imgur.com/KlNJKaz.png" width="45%" style="float: left"/>
 
   [Volley]: https://android.googlesource.com/platform/frameworks/volley/
   [XBMC-jsonrpclib-android]: https://github.com/freezy/xbmc-jsonrpclib-android
