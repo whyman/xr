@@ -23,11 +23,8 @@ package net.v00d00.xr.view;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import com.squareup.picasso.Picasso;
-
 import net.v00d00.xr.R;
 import net.v00d00.xr.XRApplication;
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.util.TypedValue;
@@ -51,10 +48,6 @@ public class CoverView extends RelativeLayout {
 		image = (ImageView) findViewById(R.id.cover_view_background);
 		title = (TextView) findViewById(R.id.cover_view_title);
 
-		AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-				LayoutParams.MATCH_PARENT,
-				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics()));
-		setLayoutParams(lp);
 	}
 
 	public CoverView(Context context, String title, String thumbnailPath) {
@@ -72,7 +65,8 @@ public class CoverView extends RelativeLayout {
 		try {
 			XRApplication.getApplication(getContext()).getPicasso()
 				.load("http://192.168.1.100/image/" + URLEncoder.encode(path, "utf-8"))
-				.placeholder(android.R.drawable.stat_notify_sync)
+				.placeholder(R.drawable.placeholder)
+				.fit()
 				.into(image);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -85,5 +79,15 @@ public class CoverView extends RelativeLayout {
 
 	public void setPosition(int position) {
 		this.position = position;
+	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	    // Restrict the aspect ratio to 1:1, fitting within original specified dimensions
+	    int width = MeasureSpec.getSize(widthMeasureSpec);;
+	    widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+	    heightMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+
+	    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 }

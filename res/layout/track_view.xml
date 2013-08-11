@@ -1,19 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="48dp"
+    android:orientation="vertical"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp">
+
+    <TextView
+        android:id="@+id/track_view_number"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/android:holo_blue_light"
+        android:layout_marginRight="4dp" />
 
 	<TextView
 	    android:id="@+id/track_view_title"
-	    android:layout_width="fill_parent"
+	    style="@android:style/TextAppearance.Medium"
+	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    style="@android:style/TextAppearance.Medium" />
+	    android:layout_toRightOf="@+id/track_view_number"
+	    android:ellipsize="end"
+	    android:maxLines="1" />
 
 	<TextView
 	    android:id="@+id/track_view_artist"
-	    android:layout_width="fill_parent"
+	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="4dp"
+	    android:layout_below="@+id/track_view_title"
+	    android:layout_toRightOf="@+id/track_view_number"
 	    />
 
-</LinearLayout>
+	  <TextView
+	      android:id="@+id/track_view_length"
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content"
+	      android:layout_alignParentBottom="true"
+	      android:layout_alignParentRight="true"
+	      android:textAlignment="textEnd" />
+
+</RelativeLayout>

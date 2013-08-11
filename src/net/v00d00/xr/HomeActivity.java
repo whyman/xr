@@ -20,12 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package net.v00d00.xr;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 
 import net.v00d00.xr.fragment.AlbumFragment;
 import net.v00d00.xr.fragment.AlbumListFragment;
+import net.v00d00.xr.fragment.ArtistListFragment;
 import net.v00d00.xr.fragment.LoadableFragment;
+import net.v00d00.xr.fragment.SongListFragment;
 
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
@@ -35,26 +36,102 @@ import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.viewpagerindicator.TitlePageIndicator;
 
 public class HomeActivity extends SlidingFragmentActivity implements LoadableFragment.ConnectionManagerProvider, AlbumListFragment.Provider {
 
 	LinearLayout layout;
 	JsonRPC jsonrpc;
 
+	ViewPager pager;
+	TitlePageIndicator indicator;
+	XRPagerAdapter adapter = null;
+
+	LoadableFragment rightHand;
+
+	private class XRPagerAdapter extends FragmentStatePagerAdapter {
+
+		private ConnectionManager cm;
+		private ArrayList<LoadableFragment> fragments;
+
+		public XRPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		public void setFragmentList(ArrayList<LoadableFragment> list) {
+			fragments = list;
+		}
+
+		public void setConnectionManager(ConnectionManager cm) {
+			this.cm = cm;
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			LoadableFragment loadable = fragments.get(position);
+			if (!loadable.isLoaded()) {
+				loadable.setConnectionManager(cm);
+				loadable.load();
+			}
+			return loadable;
+		}
+
+		@Override
+		public int getCount() {
+			return fragments.size();
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return fragments.get(position).getTitle();
+		}
+
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_pager);
 
-		layout = (LinearLayout) findViewById(R.id.pager);
+		layout = (LinearLayout) findViewById(R.id.pager_layout);
+		pager = (ViewPager) findViewById(R.id.pager);
+		indicator = (TitlePageIndicator) findViewById(R.id.titles);
+
+		jsonrpc = new JsonRPC(getApplicationContext());
+
+		if (adapter == null) {
+			adapter = new XRPagerAdapter(getSupportFragmentManager());
+			ArrayList<LoadableFragment> fl = new ArrayList<LoadableFragment>();
+			AlbumListFragment albumListFragment = new AlbumListFragment();
+			albumListFragment.setConnectionManager(getConnectionManager());
+			albumListFragment.setProvider(this);
+			fl.add(albumListFragment);
+
+			ArtistListFragment artistListFragment = new ArtistListFragment();
+			artistListFragment.setConnectionManager(getConnectionManager());
+			//f2.setProvider(this);
+			fl.add(artistListFragment);
+
+			SongListFragment songListFragment = new SongListFragment();
+			artistListFragment.setConnectionManager(getConnectionManager());
+			//f2.setProvider(this);
+			fl.add(songListFragment);
+
+			adapter.setFragmentList(fl);
+			adapter.setConnectionManager(jsonrpc.getConnectionManager());
+		}
+		pager.setAdapter(adapter);
+		indicator.setViewPager(pager);
 
 		// set the Behind View
 		setBehindContentView(R.layout.side_menu);
@@ -75,18 +152,6 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 			ab.setDisplayHomeAsUpEnabled(true);
 			ab.setDisplayShowTitleEnabled(false);
 		}
-
-		jsonrpc = new JsonRPC(getApplicationContext());
-
-		try {
-			File httpCacheDir = new File(getApplication().getCacheDir(), "http");
-			long httpCacheSize = 50 * 1024 * 1024; // 50 MiB
-			HttpResponseCache.install(httpCacheDir, httpCacheSize);
-		} catch (IOException e) {
-			Log.i("XR", "HTTP response cache installation failed:" + e);
-		}
-
-		showAlbums();
 	}
 
 	@Override
@@ -123,27 +188,28 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 		return jsonrpc.getConnectionManager();
 	}
 
-	private void replaceFragment(Fragment f) {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		fragmentTransaction.replace(R.id.pager, f);
-		fragmentTransaction.addToBackStack(null);
-		fragmentTransaction.commit();
-	}
-
-	private void showAlbums() {
-		AlbumListFragment f = new AlbumListFragment();
-		f.setConnectionManager(getConnectionManager());
-		f.setProvider(this);
-		replaceFragment(f);
-	}
-
 	@Override
 	public void showAlbumListing(AlbumDetail album) {
-		AlbumFragment newFragment = new AlbumFragment();
-		newFragment.setConnectionManager(getConnectionManager());
-		newFragment.setAlbum(album);
-		replaceFragment(newFragment);
+		AlbumFragment af = new AlbumFragment();
+		af.setConnectionManager(getConnectionManager());
+		af.setAlbum(album);
+
+		FrameLayout fl = (FrameLayout) findViewById(R.id.right_pane);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 640, getResources().getDisplayMetrics()),
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				1.0f
+			);
+		params.leftMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
+		fl.setLayoutParams(params);
+
+		if (rightHand == null)
+			getSupportFragmentManager().beginTransaction().add(R.id.right_pane, af).commit();
+		else
+			getSupportFragmentManager().beginTransaction().replace(R.id.right_pane, af).commit();
+
+		rightHand = af;
+
 	}
 
 }

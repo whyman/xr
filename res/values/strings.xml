@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">XBMC Remote</string>
+    <string name="app_name_short">XBMC</string>
     <string name="action_settings">Settings</string>
     <string name="action_movies">Movies</string>
     <string name="action_tv">TV</string>

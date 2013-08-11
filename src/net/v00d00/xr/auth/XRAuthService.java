@@ -18,30 +18,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-package net.v00d00.xr;
+package net.v00d00.xr.auth;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import static android.accounts.AccountManager.ACTION_AUTHENTICATOR_INTENT;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
 
-import android.content.Context;
-import android.util.Base64;
-import android.util.Log;
+public class XRAuthService extends Service {
 
-import com.squareup.picasso.UrlConnectionLoader;
+    private static XRAccountAuthenticator AUTHENTICATOR = null;
 
-public class BasicAuthLoader extends UrlConnectionLoader {
-
-	public BasicAuthLoader(Context context) {
-		super(context);
-	}
-
-	@Override
-    protected HttpURLConnection openConnection(String path) throws IOException {
-        HttpURLConnection c = (HttpURLConnection)  new URL(path).openConnection();
-        c.setRequestProperty("Authorization", "Basic " +
-                Base64.encodeToString("xbmc:xbmc".getBytes(), Base64.NO_WRAP));
-        return c;
+    @Override
+    public IBinder onBind(Intent intent) {
+        return intent.getAction().equals(ACTION_AUTHENTICATOR_INTENT) ? getAuthenticator().getIBinder() : null;
     }
 
+    private XRAccountAuthenticator getAuthenticator() {
+        if (AUTHENTICATOR == null)
+            AUTHENTICATOR = new XRAccountAuthenticator(this);
+        return AUTHENTICATOR;
+    }
 }

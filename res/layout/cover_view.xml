@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-	android:layout_height="16dp">
+	android:layout_height="match_parent">
 
     <ImageView
-		android:scaleType="centerCrop"
-		android:layout_height="fill_parent"
-		android:layout_width="fill_parent"
-		android:id="@+id/cover_view_background"
-    />
+        android:id="@+id/cover_view_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ff000000"
+        android:scaleType="centerCrop" />
 
     <TextView
 		android:textColor="@android:color/white"
 		android:textStyle="bold"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="#AA000000"
 		android:id="@+id/cover_view_title"
@@ -23,4 +23,4 @@
 		android:maxLines="1"
 		android:scrollHorizontally="true"
     />
-</merge>
+</RelativeLayout>

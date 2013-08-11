@@ -41,15 +41,13 @@ import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.Songid;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
-import com.squareup.picasso.Picasso;
-
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -58,17 +56,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AlbumFragment extends Fragment implements LoadableFragment {
+public class AlbumFragment extends LoadableFragment {
 
-	private View rootView;
+	private boolean loaded = false;
 	private ListView trackList;
-	private ImageView image;
 	private ConnectionManager cm;
 	private AlbumAdapter adapter;
 	private AlbumDetail album;
-	private TextView artist;
-	private TextView name;
-
 
 	public void setAlbum(AlbumDetail album) {
 		this.album = album;
@@ -81,6 +75,7 @@ public class AlbumFragment extends Fragment implements LoadableFragment {
 
 	@Override
 	public void load() {
+		loaded = true;
 		// create api call object
 		FilterAlbumId fa = new FilterAlbumId(album.albumid);
 
@@ -88,7 +83,8 @@ public class AlbumFragment extends Fragment implements LoadableFragment {
 				AudioModel.SongFields.ARTIST,
 				AudioModel.SongFields.TITLE,
 				AudioModel.SongFields.TRACK,
-				AudioModel.SongFields.DISPLAYARTIST);
+				AudioModel.SongFields.DISPLAYARTIST,
+				AudioModel.SongFields.DURATION);
 
 		// execute				cm.call(new Play, callback)
 		cm.call(call, new ApiCallback<SongDetail>() {
@@ -109,19 +105,45 @@ public class AlbumFragment extends Fragment implements LoadableFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		adapter = new AlbumAdapter(getActivity(), new ArrayList<SongDetail>());
+		if (adapter == null)
+			adapter = new AlbumAdapter(getActivity(), new ArrayList<SongDetail>());
 
-		rootView = inflater.inflate(R.layout.fragment_album, container, false);
-		trackList = (ListView) rootView.findViewById(R.id.track_list);
-		image = (ImageView) rootView.findViewById(R.id.album_cover);
-		name = (TextView) rootView.findViewById(R.id.album_name);
-		artist = (TextView) rootView.findViewById(R.id.album_artist);
+		trackList = (ListView) inflater.inflate(R.layout.fragment_album, container, false);
 
+		View header = inflater.inflate(R.layout.track_list_header, trackList, false);
+		final ImageView image = (ImageView) header.findViewById(R.id.album_cover);
+
+		final ViewTreeObserver vto = image.getViewTreeObserver();
+		vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+		    public boolean onPreDraw() {
+
+				try {
+					XRApplication.getApplication(getActivity()).getPicasso()
+						.load("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"))
+						.resize(image.getMeasuredWidth(), image.getMeasuredHeight())
+						.centerCrop()
+						.placeholder(R.drawable.placeholder)
+						.into(image);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				// Unbind ourselves once we have triggered the load
+				image.getViewTreeObserver().removeOnPreDrawListener(this);
+
+		        return true;
+		    }
+		});
+
+		((TextView) header.findViewById(R.id.album_artist)).setText(album.displayartist);
+		((TextView) header.findViewById(R.id.album_name)).setText(album.title);
+
+		trackList.addHeaderView(header);
 		trackList.setAdapter(adapter);
+
 		trackList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-				final SongDetail detail = adapter.getItem(pos);
+				final SongDetail detail = adapter.getItem(pos - 1);
 
 				Context context = getActivity().getApplicationContext();
 				String text = "Track: " + Integer.toString(detail.track);
@@ -146,21 +168,9 @@ public class AlbumFragment extends Fragment implements LoadableFragment {
 				});
 			}
 		});
+
 		load();
-
-		artist.setText(album.displayartist);
-		name.setText(album.title);
-
-		try {
-			XRApplication.getApplication(getActivity()).getPicasso()
-				.load("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"))
-				.placeholder(R.drawable.logo)
-				.into(image);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		return rootView;
+		return trackList;
 	}
 
 	private static class AlbumAdapter extends ArrayAdapter<SongDetail> {
@@ -180,7 +190,19 @@ public class AlbumFragment extends Fragment implements LoadableFragment {
 			final SongDetail song = getItem(position);;
 			view.setTitle(song.title);
 			view.setArtist(song.displayartist);
+			view.setDuration(song.duration);
+			view.setTrackNumber(song.track);
 			return view;
 		}
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return loaded;
+	}
+
+	@Override
+	public String getTitle() {
+		return album.title;
 	}
 }

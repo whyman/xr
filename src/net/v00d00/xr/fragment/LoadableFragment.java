@@ -22,9 +22,13 @@ package net.v00d00.xr.fragment;
 
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
-public interface LoadableFragment {
-	public void setConnectionManager(ConnectionManager cm);
-	public void load();
+import android.support.v4.app.Fragment;
+
+public abstract class LoadableFragment extends Fragment {
+	public abstract void setConnectionManager(ConnectionManager cm);
+	public abstract void load();
+	public abstract boolean isLoaded();
+	public abstract String getTitle();
 
 	public interface ConnectionManagerProvider {
 		public static final String ARGUMENTS_KEY = "__CONNECTIONMANAGERPROVIDER__";

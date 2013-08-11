@@ -30,6 +30,7 @@ import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
 import org.xbmc.android.jsonrpc.api.model.AudioModel;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
+import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
 import org.xbmc.android.jsonrpc.api.model.ListModel;
 import org.xbmc.android.jsonrpc.api.model.ListModel.Sort;
 import org.xbmc.android.jsonrpc.api.model.ListModel.Sort.Method;
@@ -48,9 +49,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.Toast;
 
-public class AlbumListFragment extends LoadableFragment {
+public class ArtistListFragment extends LoadableFragment {
 
 	private Parcelable state;
 	private GridView gridView;
@@ -63,12 +63,12 @@ public class AlbumListFragment extends LoadableFragment {
 		public void showAlbumListing(AlbumDetail album);
 	}
 
-	public AlbumListFragment() {}
+	public ArtistListFragment() {}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (adapter == null)
-			adapter = new AlbumListAdapter(getActivity(), new ArrayList<AlbumDetail>());
+			adapter = new AlbumListAdapter(getActivity(), new ArrayList<ArtistDetail>());
 
 		View rootView = inflater.inflate(R.layout.fragment_albums, container, false);
 		gridView = (GridView) rootView.findViewById(R.id.album_grid);
@@ -77,7 +77,7 @@ public class AlbumListFragment extends LoadableFragment {
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-				AlbumDetail detail = adapter.getItem(pos);
+				/*AlbumDetail detail = adapter.getItem(pos);
 
 				Context context = getActivity().getApplicationContext();
 				String text = "Album Id: " + Integer.toString(detail.albumid);
@@ -86,7 +86,7 @@ public class AlbumListFragment extends LoadableFragment {
 				Toast toast = Toast.makeText(context, text, duration);
 				toast.show();
 
-				provider.showAlbumListing(detail);
+				provider.showAlbumListing(detail);*/
 			}
 		});
 
@@ -113,19 +113,14 @@ public class AlbumListFragment extends LoadableFragment {
 	@Override
 	public void load() {
 		loaded = true;
-		ListModel.Sort sort = new Sort(true, Method.ALBUM, Order.ASCENDING);
+		ListModel.Sort sort = new Sort(false, ArtistDetail.LABEL, Order.ASCENDING);
 
 		// create api call object
-		final AudioLibrary.GetAlbums call = new AudioLibrary.GetAlbums(null, sort, (ListModel.AlbumFilter)null,
-		        AudioModel.AlbumFields.TITLE,
-		        AudioModel.AlbumFields.DISPLAYARTIST, // For the single album view
-		        AudioModel.AlbumFields.YEAR,
-		        AudioModel.AlbumFields.THUMBNAIL,
-		        AudioModel.AlbumFields.ALBUMLABEL);
+		final AudioLibrary.GetArtists call = new AudioLibrary.GetArtists(AudioModel.ArtistDetail.THUMBNAIL);
 
 		// execute
-		cm.call(call, new ApiCallback<AlbumDetail>() {
-		    public void onResponse(final AbstractCall<AlbumDetail> call) {
+		cm.call(call, new ApiCallback<ArtistDetail>() {
+		    public void onResponse(final AbstractCall<ArtistDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
 				    	adapter.clear();
@@ -135,13 +130,13 @@ public class AlbumListFragment extends LoadableFragment {
 		    	});
 		    }
 		    public void onError(int code, String message, String hint) {
-		        Log.d("TEST", "Error " + code + ": " + message);
+		        Log.d("TEST", "Error " + code + ": " + message + hint);
 		    }
 		});
 	}
 
-	private static class AlbumListAdapter extends ArrayAdapter<AlbumDetail> {
-		public AlbumListAdapter(Context context, List<AlbumDetail> items) {
+	private static class AlbumListAdapter extends ArrayAdapter<ArtistDetail> {
+		public AlbumListAdapter(Context context, List<ArtistDetail> items) {
 			super(context, 0, items);
 		}
 
@@ -154,10 +149,10 @@ public class AlbumListFragment extends LoadableFragment {
 				view = (CoverView) convertView;
 			}
 
-			final AlbumDetail album = getItem(position);;
+			final ArtistDetail artist = getItem(position);;
 			view.setPosition(position);
-			view.setTitle(album.title);
-			view.setThumbnailPath(album.thumbnail);
+			view.setTitle(artist.artist);
+			view.setThumbnailPath(artist.thumbnail);
 
 			return view;
 		}
@@ -185,6 +180,6 @@ public class AlbumListFragment extends LoadableFragment {
 
 	@Override
 	public String getTitle() {
-		return "Albums";
+		return "Artists";
 	}
 }

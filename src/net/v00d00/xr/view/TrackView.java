@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package net.v00d00.xr.view;
 
 import net.v00d00.xr.R;
+import net.v00d00.xr.XRUtils;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -30,6 +31,8 @@ public class TrackView extends RelativeLayout {
 
 	private TextView title;
 	private TextView artist;
+	private TextView track;
+	private TextView duration;
 
 	public TrackView(Context context) {
 			super(context);
@@ -38,21 +41,23 @@ public class TrackView extends RelativeLayout {
 
 			title = (TextView) findViewById(R.id.track_view_title);
 			artist = (TextView) findViewById(R.id.track_view_artist);
+			track = (TextView) findViewById(R.id.track_view_number);
+			duration = (TextView) findViewById(R.id.track_view_length);
 		}
-
-	public CharSequence getArtist() {
-		return artist.getText();
-	}
 
 	public void setArtist(CharSequence artist) {
 		this.artist.setText(artist);
 	}
 
-	public CharSequence getTitle() {
-		return title.getText();
-	}
-
 	public void setTitle(CharSequence title) {
 		this.title.setText(title);
+	}
+
+	public void setTrackNumber(int number) {
+		track.setText(String.format("%02d", number));
+	}
+
+	public void setDuration(int duration) {
+		this.duration.setText(XRUtils.formatSeconds(duration));
 	}
 }
