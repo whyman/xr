@@ -48,5 +48,7 @@ public class XRAuthenticatorActivity extends AccountAuthenticatorActivity {
 		super.onStart();
 
 		setContentView(R.layout.auth_layout);
+
+		getActionBar().hide();
 	}
 }

@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">XBMC Remote</string>
-    <string name="app_name_short">XBMC</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_movies">Movies</string>
-    <string name="action_tv">TV</string>
-    <string name="action_music">Music</string>
+	<string name="app_name">XBMC Remote</string>
+	<string name="app_name_short">XBMC</string>
+	<string name="action_settings">Settings</string>
+	<string name="action_movies">Movies</string>
+	<string name="action_tv">TV</string>
+	<string name="action_music">Music</string>
+
+	<string name="login_host_hint">XBMC IP or Hostname</string>
+	<string name="login_password_hint">Password</string>
+	<string name="login_username_hint">Username</string>
+	<string name="login_btn">Go</string>
 
 </resources>
