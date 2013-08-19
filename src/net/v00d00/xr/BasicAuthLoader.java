@@ -24,22 +24,39 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 
 import com.squareup.picasso.UrlConnectionLoader;
 
 public class BasicAuthLoader extends UrlConnectionLoader {
 
+	private String authId;
+	Context context;
+
 	public BasicAuthLoader(Context context) {
 		super(context);
+		this.context = context;
+	}
+
+	private String getBasicAuthId() {
+		if (authId == null) {
+			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+			String user = sharedPref.getString("pref_user", "");
+			String pass = sharedPref.getString("pref_pass", "");
+
+			authId = "Basic " + Base64.encodeToString((user + ":" + pass).getBytes(), Base64.NO_WRAP);
+		}
+
+		return authId;
 	}
 
 	@Override
-    protected HttpURLConnection openConnection(String path) throws IOException {
+	protected HttpURLConnection openConnection(String path) throws IOException {
 		HttpURLConnection c = super.openConnection(path);
-        c.setRequestProperty("Authorization", "Basic " +
-                Base64.encodeToString("xbmc:xbmc".getBytes(), Base64.NO_WRAP));
-        return c;
-    }
+		c.setRequestProperty("Authorization", getBasicAuthId());
+		return c;
+	}
 
 }
