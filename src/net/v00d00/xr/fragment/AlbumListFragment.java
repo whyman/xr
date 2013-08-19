@@ -35,7 +35,6 @@ import org.xbmc.android.jsonrpc.api.model.ListModel.Sort;
 import org.xbmc.android.jsonrpc.api.model.ListModel.Sort.Method;
 import org.xbmc.android.jsonrpc.api.model.ListModel.Sort.Order;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
-import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -50,16 +49,14 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
-public class AlbumListFragment extends LoadableFragment {
+public class AlbumListFragment extends AbstractXRFragment {
 
 	private Parcelable state;
 	private GridView gridView;
-	private ConnectionManager cm;
 	private AlbumListAdapter adapter;
 	private Provider provider;
-	private boolean loaded = false;
 
-	public interface Provider {
+	public interface Provider extends ConnectionManagerProvider {
 		public void showAlbumListing(AlbumDetail album);
 	}
 
@@ -94,25 +91,12 @@ public class AlbumListFragment extends LoadableFragment {
 		return rootView;
 	}
 
-	@Override
-	public void onStart() {
-		if (state == null)
-			load();
-		super.onStart();
-	}
-
-	@Override
-	public void setConnectionManager(ConnectionManager cm) {
-		this.cm = cm;
-	}
-
 	public void setProvider(Provider provider) {
 		this.provider = provider;
 	}
 
 	@Override
 	public void load() {
-		loaded = true;
 		ListModel.Sort sort = new Sort(true, Method.ALBUM, Order.ASCENDING);
 
 		// create api call object
@@ -124,7 +108,7 @@ public class AlbumListFragment extends LoadableFragment {
 		        AudioModel.AlbumFields.ALBUMLABEL);
 
 		// execute
-		cm.call(call, new ApiCallback<AlbumDetail>() {
+		getConnectionManager().call(call, new ApiCallback<AlbumDetail>() {
 		    public void onResponse(final AbstractCall<AlbumDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
@@ -179,12 +163,7 @@ public class AlbumListFragment extends LoadableFragment {
 	}
 
 	@Override
-	public boolean isLoaded() {
-		return loaded;
-	}
-
-	@Override
-	public String getTitle() {
+	public CharSequence getTitle() {
 		return "Albums";
 	}
 }

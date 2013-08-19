@@ -1,0 +1,15 @@
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".AlbumListFragment"
+
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:id="@+id/album_grid"
+	android:verticalSpacing="1dp"
+	android:horizontalSpacing="1dp"
+	android:gravity="center"
+	android:numColumns="auto_fit"
+	android:isScrollContainer="true"
+	android:columnWidth="150dp"
+	android:stretchMode="columnWidth"
+/>

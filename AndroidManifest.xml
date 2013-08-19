@@ -30,16 +30,5 @@
             android:excludeFromRecents="true" />
 
         <service android:name="org.xbmc.android.jsonrpc.service.ConnectionService" />
-        <service
-            android:name=".auth.XRAuthService"
-            android:process=":auth" >
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
     </application>
 </manifest>

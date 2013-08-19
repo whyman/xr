@@ -22,16 +22,42 @@ package net.v00d00.xr.fragment;
 
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 
-public abstract class LoadableFragment extends Fragment {
-	public abstract void setConnectionManager(ConnectionManager cm);
-	public abstract void load();
-	public abstract boolean isLoaded();
-	public abstract String getTitle();
+public abstract class AbstractXRFragment extends Fragment {
+
+	private ConnectionManager cm;
 
 	public interface ConnectionManagerProvider {
-		public static final String ARGUMENTS_KEY = "__CONNECTIONMANAGERPROVIDER__";
 		ConnectionManager getConnectionManager();
 	}
+
+	protected ConnectionManager getConnectionManager() {
+		return getConnectionManager(null);
+	}
+
+	protected ConnectionManager getConnectionManager(Activity activity) {
+		if (cm == null) {
+			if (activity == null)
+				activity = getActivity();
+			if (activity != null) {
+				if (activity instanceof ConnectionManagerProvider)
+					cm = ((ConnectionManagerProvider) activity).getConnectionManager();
+				else
+					throw new ClassCastException(activity.toString() + " does not implement ConnectionManagerProvider");
+			}
+		}
+		return cm;
+	}
+
+	protected abstract void load();
+	public abstract CharSequence getTitle();
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		load();
+	}
+
 }

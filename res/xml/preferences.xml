@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:title="@string/pref_host_title"
+        android:key="pref_cat_host">
+
+	    <EditTextPreference
+	        android:key="pref_host"
+	        android:title="@string/pref_host"
+	        android:summary="@string/pref_host_summ"
+	        android:defaultValue="192.168.1.100" />
+	        />
+	    <EditTextPreference
+	        android:key="pref_user"
+	        android:title="@string/pref_user"
+	        android:summary="@string/pref_user_summ"
+	        android:defaultValue="xbmc" />
+	        />
+	    <EditTextPreference
+	        android:key="pref_pass"
+	        android:title="@string/pref_pass"
+	        android:summary="@string/pref_pass_summ"
+	        android:defaultValue="xbmc" />
+	        />
+	    <EditTextPreference
+	        android:key="pref_http"
+	        android:inputType="number"
+	        android:numeric="integer"
+	        android:title="@string/pref_http"
+	        android:summary="@string/pref_http_summ"
+	        android:defaultValue="80"
+	        />
+
+	    <EditTextPreference
+	        android:key="pref_tcp"
+	        android:inputType="number"
+	        android:numeric="integer"
+	        android:title="@string/pref_tcp"
+	        android:summary="@string/pref_tcp_summ"
+	        android:defaultValue="9090"
+	        />
+
+	 </PreferenceCategory>
+
+</PreferenceScreen>

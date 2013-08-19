@@ -22,10 +22,11 @@ package net.v00d00.xr;
 
 import java.util.ArrayList;
 
+import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.fragment.AlbumFragment;
 import net.v00d00.xr.fragment.AlbumListFragment;
 import net.v00d00.xr.fragment.ArtistListFragment;
-import net.v00d00.xr.fragment.LoadableFragment;
+import net.v00d00.xr.fragment.PlayingBarFragment;
 import net.v00d00.xr.fragment.SongListFragment;
 
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
@@ -48,7 +49,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class HomeActivity extends SlidingFragmentActivity implements LoadableFragment.ConnectionManagerProvider, AlbumListFragment.Provider {
+public class HomeActivity extends SlidingFragmentActivity implements AbstractXRFragment.ConnectionManagerProvider, AlbumListFragment.Provider {
 
 	LinearLayout layout;
 	JsonRPC jsonrpc;
@@ -56,34 +57,27 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 	ViewPager pager;
 	TitlePageIndicator indicator;
 	XRPagerAdapter adapter = null;
+	PlayingBarFragment playingBar;
 
-	LoadableFragment rightHand;
+	FrameLayout rightPane;
+
+	AbstractXRFragment rightHand;
 
 	private class XRPagerAdapter extends FragmentStatePagerAdapter {
 
-		private ConnectionManager cm;
-		private ArrayList<LoadableFragment> fragments;
+		private ArrayList<AbstractXRFragment> fragments;
 
 		public XRPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
 
-		public void setFragmentList(ArrayList<LoadableFragment> list) {
+		public void setFragmentList(ArrayList<AbstractXRFragment> list) {
 			fragments = list;
-		}
-
-		public void setConnectionManager(ConnectionManager cm) {
-			this.cm = cm;
 		}
 
 		@Override
 		public Fragment getItem(int position) {
-			LoadableFragment loadable = fragments.get(position);
-			if (!loadable.isLoaded()) {
-				loadable.setConnectionManager(cm);
-				loadable.load();
-			}
-			return loadable;
+			return fragments.get(position);
 		}
 
 		@Override
@@ -95,7 +89,6 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 		public CharSequence getPageTitle(int position) {
 			return fragments.get(position).getTitle();
 		}
-
 	}
 
 	@Override
@@ -107,28 +100,24 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 		pager = (ViewPager) findViewById(R.id.pager);
 		indicator = (TitlePageIndicator) findViewById(R.id.titles);
 
+		rightPane = (FrameLayout) findViewById(R.id.right_pane);
+
 		jsonrpc = new JsonRPC(getApplicationContext());
 
 		if (adapter == null) {
 			adapter = new XRPagerAdapter(getSupportFragmentManager());
-			ArrayList<LoadableFragment> fl = new ArrayList<LoadableFragment>();
+			ArrayList<AbstractXRFragment> fl = new ArrayList<AbstractXRFragment>();
 			AlbumListFragment albumListFragment = new AlbumListFragment();
-			albumListFragment.setConnectionManager(getConnectionManager());
 			albumListFragment.setProvider(this);
 			fl.add(albumListFragment);
 
 			ArtistListFragment artistListFragment = new ArtistListFragment();
-			artistListFragment.setConnectionManager(getConnectionManager());
-			//f2.setProvider(this);
 			fl.add(artistListFragment);
 
 			SongListFragment songListFragment = new SongListFragment();
-			artistListFragment.setConnectionManager(getConnectionManager());
-			//f2.setProvider(this);
 			fl.add(songListFragment);
 
 			adapter.setFragmentList(fl);
-			adapter.setConnectionManager(jsonrpc.getConnectionManager());
 		}
 		pager.setAdapter(adapter);
 		indicator.setViewPager(pager);
@@ -152,6 +141,10 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 			ab.setDisplayHomeAsUpEnabled(true);
 			ab.setDisplayShowTitleEnabled(false);
 		}
+
+		PlayingBarFragment pbf = new PlayingBarFragment();
+		jsonrpc.getConnectionManager().registerObserver(pbf);
+		getSupportFragmentManager().beginTransaction().add(R.id.bottom_pane, pbf).commit();
 	}
 
 	@Override
@@ -178,10 +171,19 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 			return true;
         case R.id.action_music:
             return true;
+        case R.id.action_settings:
+        	showSettings();
+        	return true;
         default:
             return super.onOptionsItemSelected(item);
 		}
     }
+
+	private void showSettings() {
+		 getFragmentManager().beginTransaction()
+         .replace(R.id.pager_layout, new SettingsFragment())
+         .addToBackStack(null).commit();
+	}
 
 	@Override
 	public ConnectionManager getConnectionManager() {
@@ -191,17 +193,15 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 	@Override
 	public void showAlbumListing(AlbumDetail album) {
 		AlbumFragment af = new AlbumFragment();
-		af.setConnectionManager(getConnectionManager());
 		af.setAlbum(album);
 
-		FrameLayout fl = (FrameLayout) findViewById(R.id.right_pane);
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 640, getResources().getDisplayMetrics()),
 				LinearLayout.LayoutParams.MATCH_PARENT,
 				1.0f
 			);
 		params.leftMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
-		fl.setLayoutParams(params);
+		rightPane.setLayoutParams(params);
 
 		if (rightHand == null)
 			getSupportFragmentManager().beginTransaction().add(R.id.right_pane, af).commit();
@@ -211,5 +211,4 @@ public class HomeActivity extends SlidingFragmentActivity implements LoadableFra
 		rightHand = af;
 
 	}
-
 }

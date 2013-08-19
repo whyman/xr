@@ -29,14 +29,8 @@ import net.v00d00.xr.view.CoverView;
 import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
 import org.xbmc.android.jsonrpc.api.model.AudioModel;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
-import org.xbmc.android.jsonrpc.api.model.ListModel;
-import org.xbmc.android.jsonrpc.api.model.ListModel.Sort;
-import org.xbmc.android.jsonrpc.api.model.ListModel.Sort.Method;
-import org.xbmc.android.jsonrpc.api.model.ListModel.Sort.Order;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
-import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -50,17 +44,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
-public class ArtistListFragment extends LoadableFragment {
+public class ArtistListFragment extends AbstractXRFragment {
 
 	private Parcelable state;
 	private GridView gridView;
-	private ConnectionManager cm;
 	private AlbumListAdapter adapter;
-	private Provider provider;
-	private boolean loaded = false;
 
-	public interface Provider {
-		public void showAlbumListing(AlbumDetail album);
+	public interface ArtistListProvider extends ConnectionManagerProvider {
+
 	}
 
 	public ArtistListFragment() {}
@@ -90,36 +81,16 @@ public class ArtistListFragment extends LoadableFragment {
 			}
 		});
 
-
 		return rootView;
 	}
 
 	@Override
-	public void onStart() {
-		if (state == null)
-			load();
-		super.onStart();
-	}
-
-	@Override
-	public void setConnectionManager(ConnectionManager cm) {
-		this.cm = cm;
-	}
-
-	public void setProvider(Provider provider) {
-		this.provider = provider;
-	}
-
-	@Override
 	public void load() {
-		loaded = true;
-		ListModel.Sort sort = new Sort(false, ArtistDetail.LABEL, Order.ASCENDING);
-
 		// create api call object
 		final AudioLibrary.GetArtists call = new AudioLibrary.GetArtists(AudioModel.ArtistDetail.THUMBNAIL);
 
 		// execute
-		cm.call(call, new ApiCallback<ArtistDetail>() {
+		getConnectionManager().call(call, new ApiCallback<ArtistDetail>() {
 		    public void onResponse(final AbstractCall<ArtistDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
@@ -174,12 +145,7 @@ public class ArtistListFragment extends LoadableFragment {
 	}
 
 	@Override
-	public boolean isLoaded() {
-		return loaded;
-	}
-
-	@Override
-	public String getTitle() {
+	public CharSequence getTitle() {
 		return "Artists";
 	}
 }

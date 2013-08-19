@@ -56,11 +56,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AlbumFragment extends LoadableFragment {
+public class AlbumFragment extends AbstractXRFragment {
 
-	private boolean loaded = false;
 	private ListView trackList;
-	private ConnectionManager cm;
 	private AlbumAdapter adapter;
 	private AlbumDetail album;
 
@@ -69,13 +67,7 @@ public class AlbumFragment extends LoadableFragment {
 	}
 
 	@Override
-	public void setConnectionManager(ConnectionManager cm) {
-		this.cm = cm;
-	}
-
-	@Override
 	public void load() {
-		loaded = true;
 		// create api call object
 		FilterAlbumId fa = new FilterAlbumId(album.albumid);
 
@@ -87,7 +79,7 @@ public class AlbumFragment extends LoadableFragment {
 				AudioModel.SongFields.DURATION);
 
 		// execute				cm.call(new Play, callback)
-		cm.call(call, new ApiCallback<SongDetail>() {
+		getConnectionManager().call(call, new ApiCallback<SongDetail>() {
 		    public void onResponse(final AbstractCall<SongDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
@@ -152,7 +144,7 @@ public class AlbumFragment extends LoadableFragment {
 				Toast toast = Toast.makeText(context, text, duration);
 				toast.show();
 
-				cm.call(new Player.Open(new Item(new Songid(detail.songid))), new ApiCallback<String>() {
+				getConnectionManager().call(new Player.Open(new Item(new Songid(detail.songid))), new ApiCallback<String>() {
 
 					@Override
 					public void onResponse(AbstractCall<String> call) {
@@ -168,8 +160,6 @@ public class AlbumFragment extends LoadableFragment {
 				});
 			}
 		});
-
-		load();
 		return trackList;
 	}
 
@@ -197,12 +187,7 @@ public class AlbumFragment extends LoadableFragment {
 	}
 
 	@Override
-	public boolean isLoaded() {
-		return loaded;
-	}
-
-	@Override
-	public String getTitle() {
-		return album.title;
+	public CharSequence getTitle() {
+		return album == null? "" : album.title;
 	}
 }

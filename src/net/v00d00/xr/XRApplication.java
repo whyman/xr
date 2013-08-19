@@ -26,19 +26,21 @@ import android.content.Context;
 import com.squareup.picasso.Picasso;
 
 public class XRApplication extends Application {
-    private Picasso picasso;
+	private Picasso picasso;
 
-    @Override
-    public void onCreate() {
-    	super.onCreate();
-    	picasso = new Picasso.Builder(getApplicationContext()).loader(new BasicAuthLoader(getApplicationContext())).build();
-    }
+	@Override
+	public void onCreate() {
+		super.onCreate();
 
-    public Picasso getPicasso() {
-    	return picasso;
-    }
+		picasso = new Picasso.Builder(getApplicationContext()).loader(new BasicAuthLoader(getApplicationContext())).build();
+		picasso.setDebugging(true);
+	}
 
-    public static XRApplication getApplication(Context context) {
-        return (XRApplication) context.getApplicationContext();
-    }
+	public Picasso getPicasso() {
+		return picasso;
+	}
+
+	public static XRApplication getApplication(Context context) {
+		return (XRApplication) context.getApplicationContext();
+	}
 }

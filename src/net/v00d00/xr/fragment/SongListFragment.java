@@ -30,13 +30,8 @@ import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
 import org.xbmc.android.jsonrpc.api.model.AudioModel;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
-import org.xbmc.android.jsonrpc.api.model.ListModel;
-import org.xbmc.android.jsonrpc.api.model.ListModel.Sort;
-import org.xbmc.android.jsonrpc.api.model.ListModel.Sort.Order;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
-import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -50,16 +45,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
-public class SongListFragment extends LoadableFragment {
+public class SongListFragment extends AbstractXRFragment {
 
 	private Parcelable state;
 	private GridView gridView;
-	private ConnectionManager cm;
 	private AlbumListAdapter adapter;
-	private Provider provider;
-	private boolean loaded = false;
 
-	public interface Provider {
+	public interface SongListProvider extends ConnectionManagerProvider {
 		public void showAlbumListing(AlbumDetail album);
 	}
 
@@ -95,25 +87,7 @@ public class SongListFragment extends LoadableFragment {
 	}
 
 	@Override
-	public void onStart() {
-		if (state == null)
-			load();
-		super.onStart();
-	}
-
-	@Override
-	public void setConnectionManager(ConnectionManager cm) {
-		this.cm = cm;
-	}
-
-	public void setProvider(Provider provider) {
-		this.provider = provider;
-	}
-
-	@Override
 	public void load() {
-		loaded = true;
-
 		final AudioLibrary.GetSongs call = new AudioLibrary.GetSongs(
 				AudioModel.SongFields.ARTIST,
 				AudioModel.SongFields.TITLE,
@@ -122,7 +96,7 @@ public class SongListFragment extends LoadableFragment {
 				AudioModel.SongFields.THUMBNAIL);
 
 		// execute
-		cm.call(call, new ApiCallback<SongDetail>() {
+		getConnectionManager().call(call, new ApiCallback<SongDetail>() {
 		    public void onResponse(final AbstractCall<SongDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
@@ -177,12 +151,7 @@ public class SongListFragment extends LoadableFragment {
 	}
 
 	@Override
-	public boolean isLoaded() {
-		return loaded;
-	}
-
-	@Override
-	public String getTitle() {
+	public CharSequence getTitle() {
 		return "Songs";
 	}
 }

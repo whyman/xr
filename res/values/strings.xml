@@ -8,9 +8,16 @@
 	<string name="action_tv">TV</string>
 	<string name="action_music">Music</string>
 
-	<string name="login_host_hint">XBMC IP or Hostname</string>
-	<string name="login_password_hint">Password</string>
-	<string name="login_username_hint">Username</string>
-	<string name="login_btn">Go</string>
+	<string name="pref_host_title">Media Center</string>
+	<string name="pref_host">IP or Hostname</string>
+	<string name="pref_host_summ">Defaults to 192.168.1.100</string>
+	<string name="pref_pass">Password</string>
+	<string name="pref_pass_summ">Defaults to \'xbmc\'</string>
+	<string name="pref_user">Username</string>
+	<string name="pref_user_summ">Defaults to \'xbmc\'</string>
+	<string name="pref_http">HTTP Port</string>
+	<string name="pref_http_summ">Defaults to 8080</string>
+	<string name="pref_tcp">JSON-RPC TCP Port</string>
+	<string name="pref_tcp_summ">Defaults to 9090</string>
 
 </resources>

@@ -24,6 +24,9 @@ import org.xbmc.android.jsonrpc.config.HostConfig;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 
 public class JsonRPC {
@@ -32,7 +35,17 @@ public class JsonRPC {
 
 	public JsonRPC(Context appContext) {
 		this.appcontext = appContext;
-		cm = new ConnectionManager(appContext, new HostConfig("192.168.1.100"));
+
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(appContext);
+		String address = sharedPref.getString("pref_host", "");
+		String user = sharedPref.getString("pref_user", null);
+		String pass = sharedPref.getString("pref_pass", null);
+		int httpPort = Integer.parseInt(sharedPref.getString("pref_http", "0"));
+		int tcpPort = Integer.parseInt(sharedPref.getString("pref_tcp", "0"));
+
+		Log.d("XR", address + user + pass);
+
+		cm = new ConnectionManager(appContext, new HostConfig(address, httpPort, tcpPort, user, pass));
 	}
 
 	public ConnectionManager getConnectionManager() {

@@ -22,11 +22,9 @@ package net.v00d00.xr;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 
 import com.squareup.picasso.UrlConnectionLoader;
 
@@ -38,7 +36,7 @@ public class BasicAuthLoader extends UrlConnectionLoader {
 
 	@Override
     protected HttpURLConnection openConnection(String path) throws IOException {
-        HttpURLConnection c = (HttpURLConnection)  new URL(path).openConnection();
+		HttpURLConnection c = super.openConnection(path);
         c.setRequestProperty("Authorization", "Basic " +
                 Base64.encodeToString("xbmc:xbmc".getBytes(), Base64.NO_WRAP));
         return c;
