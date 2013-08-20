@@ -35,23 +35,28 @@ import org.xbmc.android.jsonrpc.io.ConnectionManager;
 import android.app.ActionBar;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
+import android.provider.MediaStore.Audio.PlaylistsColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class HomeActivity extends SlidingFragmentActivity implements AbstractXRFragment.ConnectionManagerProvider, AlbumListFragment.Provider {
+public class HomeActivity extends SlidingFragmentActivity implements AbstractXRFragment.ConnectionManagerProvider, AlbumListFragment.Provider, PlayingBarFragment.Provider {
 
-	LinearLayout layout;
+	SlidingUpPanelLayout layout;
 	JsonRPC jsonrpc;
 
 	ViewPager pager;
@@ -94,12 +99,12 @@ public class HomeActivity extends SlidingFragmentActivity implements AbstractXRF
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.view_pager);
 
-		layout = (LinearLayout) findViewById(R.id.pager_layout);
+		layout = (SlidingUpPanelLayout) findViewById(R.id.pager_layout);
 		pager = (ViewPager) findViewById(R.id.pager);
 		indicator = (TitlePageIndicator) findViewById(R.id.titles);
-
 		rightPane = (FrameLayout) findViewById(R.id.right_pane);
 
 		jsonrpc = new JsonRPC(getApplicationContext());
@@ -210,5 +215,10 @@ public class HomeActivity extends SlidingFragmentActivity implements AbstractXRF
 
 		rightHand = af;
 
+	}
+
+	@Override
+	public void setDragView(View view) {
+		layout.setDragView(view);
 	}
 }

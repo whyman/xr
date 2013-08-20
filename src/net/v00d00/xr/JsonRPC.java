@@ -30,12 +30,9 @@ import android.util.Log;
 
 
 public class JsonRPC {
-	private Context appcontext;
 	private ConnectionManager cm;
 
 	public JsonRPC(Context appContext) {
-		this.appcontext = appContext;
-
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(appContext);
 		String address = sharedPref.getString("pref_host", "");
 		String user = sharedPref.getString("pref_user", null);

@@ -39,7 +39,6 @@ import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.Songid;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
-import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
 import android.content.Context;
 import android.os.Bundle;

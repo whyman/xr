@@ -26,6 +26,7 @@ import java.util.List;
 
 import net.v00d00.xr.R;
 import net.v00d00.xr.XRApplication;
+import net.v00d00.xr.fragment.AbstractXRFragment.ConnectionManagerProvider;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary.GetSongDetails;
@@ -46,6 +47,7 @@ import org.xbmc.android.jsonrpc.notification.PlayerEvent.SpeedChanged;
 import org.xbmc.android.jsonrpc.notification.PlayerEvent.Stop;
 import org.xbmc.android.jsonrpc.notification.PlayerObserver;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -60,6 +62,11 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 	private TextView title;
 	private ImageView image;
 	private TextView subtitle;
+	private ImageView bigImage;
+
+	public interface Provider {
+		public void setDragView(View view);
+	}
 
 	private PlayerObserver playerObserver;
 
@@ -103,6 +110,10 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 				.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
 				.fit()
 				.into(this.image);
+			XRApplication.getApplication(getActivity()).getPicasso()
+			.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
+			.fit()
+			.into(this.bigImage);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -118,10 +129,17 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 		image = (ImageView) view.findViewById(R.id.now_playing_bar_img);
 		title = (TextView) view.findViewById(R.id.now_playing_bar_title);
 		subtitle = (TextView) view.findViewById(R.id.now_playing_bar_subtitle);
+		bigImage = (ImageView) view.findViewById(R.id.now_playing_bar_img_big);
 
 		// Make marquee mode work
 		title.setSelected(true);
 		subtitle.setSelected(true);
+
+		Activity activity = getActivity();
+		if (activity instanceof Provider)
+			((Provider) activity).setDragView(image);
+		else
+			throw new ClassCastException(activity.toString() + " does not implement ConnectionManagerProvider");
 
 		return view;
 	}
