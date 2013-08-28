@@ -33,7 +33,6 @@ import org.xbmc.android.jsonrpc.io.ConnectionManager;
 import android.app.ActionBar;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;

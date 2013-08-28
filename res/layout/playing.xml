@@ -5,75 +5,70 @@
     android:background="@android:color/black"
     android:orientation="vertical" >
 
-	<RelativeLayout
-	    android:layout_width="wrap_content"
-	    android:layout_height="70dp" >
+    <LinearLayout
+        android:layout_width="match_parent"
+	    android:layout_height="70dp"
+		android:orientation="horizontal"
+		android:background="@drawable/holo_blue_top_border">
 
-		<View
-			android:id="@+id/separator"
-			android:background="@android:color/holo_blue_light"
-			android:layout_width="fill_parent"
-			android:layout_height="2dp"
-			android:layout_alignParentTop="true" />
-
-		<ImageView
-		    android:id="@+id/now_playing_bar_img"
-		    android:layout_width="wrap_content"
-		    android:layout_height="match_parent"
-		    android:layout_alignParentLeft="true"
-		    android:layout_alignParentTop="true"
-		    android:layout_marginTop="2dp"
-		    android:adjustViewBounds="true"
-		    android:scaleType="centerInside"
-		    android:src="@drawable/placeholder" />
-
-		<TextView
-		    android:id="@+id/now_playing_bar_title"
-		    android:layout_width="wrap_content"
+	    <RelativeLayout
+	        android:layout_width="0dp"
 		    android:layout_height="wrap_content"
-		    android:layout_alignParentTop="true"
-		    android:layout_below="@+id/separator"
-		    android:layout_marginLeft="8dp"
-		    android:layout_marginTop="6dp"
-		    android:layout_toLeftOf="@+id/now_playing_bar_previous"
-		    android:layout_toRightOf="@+id/now_playing_bar_img"
-			android:singleLine="true"
-			android:ellipsize="marquee"
-		    android:textAppearance="?android:attr/textAppearanceMedium" />
+	        android:id="@+id/now_playing_bar"
+	        android:layout_weight="1">
 
-		<TextView
-		    android:id="@+id/now_playing_bar_subtitle"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_alignLeft="@+id/now_playing_bar_title"
-		    android:layout_below="@+id/now_playing_bar_title"
-		    android:layout_toLeftOf="@+id/now_playing_bar_previous"
-			android:singleLine="true"
-			android:ellipsize="marquee"
-		    android:textAppearance="?android:attr/textAppearanceSmall" />
+			<ImageView
+			    android:id="@+id/now_playing_bar_img"
+			    android:layout_width="wrap_content"
+			    android:layout_height="match_parent"
+			    android:layout_alignParentLeft="true"
+			    android:layout_alignParentTop="true"
+			    android:layout_marginTop="2dp"
+			    android:adjustViewBounds="true"
+			    android:scaleType="centerInside"
+			    android:src="@drawable/placeholder" />
 
-			<ImageButton
-			    android:id="@+id/now_playing_bar_previous"
-			    style="@style/NowPlayingButton"
-			    android:layout_centerVertical="true"
-			    android:layout_toLeftOf="@+id/now_playing_bar_pause"
-			    android:src="@drawable/xr_holo_dark_previous" />
+			<TextView
+			    android:id="@+id/now_playing_bar_title"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentTop="true"
+			    android:layout_marginLeft="8dp"
+			    android:layout_marginTop="6dp"
+			    android:layout_toRightOf="@+id/now_playing_bar_img"
+				android:singleLine="true"
+				android:ellipsize="marquee"
+			    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-			<ImageButton
-			    android:id="@+id/now_playing_bar_pause"
-			    style="@style/NowPlayingButton"
-			    android:layout_centerVertical="true"
-			    android:layout_toLeftOf="@+id/now_playing_bar_next"
-			    android:src="@drawable/apollo_holo_dark_pause" />
+			<TextView
+			    android:id="@+id/now_playing_bar_subtitle"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_alignLeft="@+id/now_playing_bar_title"
+			    android:layout_below="@+id/now_playing_bar_title"
+				android:singleLine="true"
+				android:ellipsize="marquee"
+			    android:textAppearance="?android:attr/textAppearanceSmall" />
 
-			<ImageButton
-			    android:id="@+id/now_playing_bar_next"
-			    style="@style/NowPlayingButton"
-			    android:layout_alignParentRight="true"
-			    android:layout_centerVertical="true"
-			    android:src="@drawable/apollo_holo_dark_next" />
+		</RelativeLayout>
 
-	</RelativeLayout>
+    	<ImageButton
+		    android:id="@+id/now_playing_bar_previous"
+		    style="@style/NowPlayingButton"
+		    android:src="@drawable/xr_holo_dark_previous" />
+
+		<ImageButton
+		    android:id="@+id/now_playing_bar_pause"
+		    style="@style/NowPlayingButton"
+		    android:src="@drawable/apollo_holo_dark_pause" />
+
+		<ImageButton
+		    android:id="@+id/now_playing_bar_next"
+		    style="@style/NowPlayingButton"
+		    android:src="@drawable/apollo_holo_dark_next" />
+
+    </LinearLayout>
+
 
 	<RelativeLayout
 	    android:layout_width="match_parent"

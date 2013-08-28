@@ -49,16 +49,17 @@ import org.xbmc.android.jsonrpc.notification.PlayerObserver;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class PlayingBarFragment extends AbstractXRFragment implements NotificationObserver {
 
+	private RelativeLayout bar;
 	private TextView title;
 	private ImageView image;
 	private TextView subtitle;
@@ -94,6 +95,7 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 		public void onPause(Pause notification) {
 		}
 		public void onStop(Stop notification) {
+			showNowPlaying("", "", null);
 		}
 		public void onSpeedChanged(SpeedChanged notification) {
 		}
@@ -105,18 +107,29 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 		this.title.setText(title);
 		this.subtitle.setText(subtitle);
 
+
 		try {
-			XRApplication.getApplication(getActivity()).getPicasso()
-				.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
-				.fit()
-				.into(this.image);
-			XRApplication.getApplication(getActivity()).getPicasso()
-			.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
-			.fit()
-			.into(this.bigImage);
+			if (image != null) {
+				XRApplication.getApplication(getActivity()).getPicasso()
+					.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
+					.fit()
+					.into(this.image);
+				XRApplication.getApplication(getActivity()).getPicasso()
+					.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
+					.skipCache()
+					.into(this.bigImage);
+			} else {
+				XRApplication.getApplication(getActivity()).getPicasso()
+					.load(R.drawable.placeholder)
+					.into(this.image);
+				XRApplication.getApplication(getActivity()).getPicasso()
+					.load(R.drawable.placeholder)
+					.into(this.bigImage);
+			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public PlayingBarFragment() {};
@@ -126,6 +139,7 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 
 		View view = inflater.inflate(R.layout.playing, container, false);
 
+		bar = (RelativeLayout) view.findViewById(R.id.now_playing_bar);
 		image = (ImageView) view.findViewById(R.id.now_playing_bar_img);
 		title = (TextView) view.findViewById(R.id.now_playing_bar_title);
 		subtitle = (TextView) view.findViewById(R.id.now_playing_bar_subtitle);
@@ -135,10 +149,9 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 		title.setSelected(true);
 		subtitle.setSelected(true);
 
-		Log.d(">>>>>>>>>>>.", "Setting DragView");
 		Activity activity = getActivity();
 		if (activity instanceof Provider)
-			((Provider) activity).setDragView(image);
+			((Provider) activity).setDragView(bar);
 		else
 			throw new ClassCastException(activity.toString() + " does not implement ConnectionManagerProvider");
 
