@@ -54,7 +54,6 @@ public class AlbumListFragment extends AbstractXRFragment {
 	private Parcelable state;
 	private GridView gridView;
 	private AlbumListAdapter adapter;
-	private Provider provider;
 
 	public interface Provider extends ConnectionManagerProvider {
 		public void showAlbumListing(AlbumDetail album);
@@ -83,16 +82,12 @@ public class AlbumListFragment extends AbstractXRFragment {
 				Toast toast = Toast.makeText(context, text, duration);
 				toast.show();
 
-				provider.showAlbumListing(detail);
+				((Provider) getActivity()).showAlbumListing(detail);
 			}
 		});
 
 
 		return rootView;
-	}
-
-	public void setProvider(Provider provider) {
-		this.provider = provider;
 	}
 
 	@Override

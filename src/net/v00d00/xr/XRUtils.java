@@ -1,5 +1,8 @@
 package net.v00d00.xr;
 
+import android.content.Context;
+import android.content.res.Configuration;
+
 
 public class XRUtils {
 	public static CharSequence formatSeconds(int totalSecs) {
@@ -16,5 +19,15 @@ public class XRUtils {
 		sb.append(":");
 		sb.append(String.format("%02d", seconds));
 		return sb.toString();
+	}
+
+	public static boolean isTablet(Context context) {
+		if (context.getResources().getBoolean(R.bool.is10))
+			return true;
+		if (context.getResources().getBoolean(R.bool.is7)) {
+			if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+				return true;
+		}
+		return false;
 	}
 }

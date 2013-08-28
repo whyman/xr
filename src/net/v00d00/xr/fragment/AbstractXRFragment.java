@@ -33,7 +33,7 @@ public abstract class AbstractXRFragment extends Fragment {
 		ConnectionManager getConnectionManager();
 	}
 
-	protected ConnectionManager getConnectionManager() {
+	public ConnectionManager getConnectionManager() {
 		return getConnectionManager(null);
 	}
 

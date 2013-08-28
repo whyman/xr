@@ -1,9 +1,9 @@
 <resources>
-
-    <!-- Default screen margins, per the Android Design guidelines. -->
+	<bool name="is10">false</bool>
+	<bool name="is7">false</bool>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="side_menu_width">300dip</dimen>
+    <dimen name="side_menu_width">240dip</dimen>
     <dimen name="side_menu_shadow_width">20dip</dimen>
 
 </resources>

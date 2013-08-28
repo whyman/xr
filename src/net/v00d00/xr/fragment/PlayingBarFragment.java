@@ -26,7 +26,6 @@ import java.util.List;
 
 import net.v00d00.xr.R;
 import net.v00d00.xr.XRApplication;
-import net.v00d00.xr.fragment.AbstractXRFragment.ConnectionManagerProvider;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary.GetSongDetails;
@@ -50,6 +49,7 @@ import org.xbmc.android.jsonrpc.notification.PlayerObserver;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,6 +135,7 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 		title.setSelected(true);
 		subtitle.setSelected(true);
 
+		Log.d(">>>>>>>>>>>.", "Setting DragView");
 		Activity activity = getActivity();
 		if (activity instanceof Provider)
 			((Provider) activity).setDragView(image);
@@ -188,7 +189,6 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 	@Override
 	public void onConnected() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
