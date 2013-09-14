@@ -32,7 +32,7 @@ public class XRApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-		picasso = new Picasso.Builder(getApplicationContext()).loader(new BasicAuthLoader(getApplicationContext())).build();
+		picasso = new Picasso.Builder(getApplicationContext()).downloader(new BasicAuthLoader(getApplicationContext())).build();
 		picasso.setDebugging(true);
 	}
 
@@ -41,6 +41,8 @@ public class XRApplication extends Application {
 	}
 
 	public static XRApplication getApplication(Context context) {
+		if (context == null)
+			return null;
 		return (XRApplication) context.getApplicationContext();
 	}
 }

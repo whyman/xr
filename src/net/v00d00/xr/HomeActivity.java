@@ -33,6 +33,7 @@ import org.xbmc.android.jsonrpc.io.ConnectionManager;
 import android.app.ActionBar;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -54,7 +55,6 @@ public class HomeActivity extends SlidingFragmentActivity implements AbstractXRF
 
 	PlayingBarFragment playingBarFragment;
 	SideMenuFragment menuFragment;
-	MusicFragment musicFragment;
 
 	FrameLayout rightPane;
 	FrameLayout leftPane;
@@ -83,14 +83,12 @@ public class HomeActivity extends SlidingFragmentActivity implements AbstractXRF
 			jsonrpc.getConnectionManager().registerObserver(playingBarFragment);
 			t.replace(R.id.bottom_pane, playingBarFragment);
 
-			musicFragment = new MusicFragment();
-			t.replace(R.id.left_pane, musicFragment);
+			t.replace(R.id.left_pane, new MusicFragment());
 
 			t.commit();
 		} else {
 			menuFragment = (SideMenuFragment) getSupportFragmentManager().findFragmentById(R.id.side_menu_frame);
 			playingBarFragment = (PlayingBarFragment) getSupportFragmentManager().findFragmentById(R.id.bottom_pane);
-			musicFragment = (MusicFragment) getSupportFragmentManager().findFragmentById(R.id.left_pane);
 		}
 
 		setSlidingActionBarEnabled(false);

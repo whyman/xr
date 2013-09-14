@@ -25,12 +25,13 @@ import java.net.HttpURLConnection;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 
-import com.squareup.picasso.UrlConnectionLoader;
+import com.squareup.picasso.UrlConnectionDownloader;
 
-public class BasicAuthLoader extends UrlConnectionLoader {
+public class BasicAuthLoader extends UrlConnectionDownloader {
 
 	private String authId;
 	Context context;
@@ -53,7 +54,7 @@ public class BasicAuthLoader extends UrlConnectionLoader {
 	}
 
 	@Override
-	protected HttpURLConnection openConnection(String path) throws IOException {
+	protected HttpURLConnection openConnection(Uri path) throws IOException {
 		HttpURLConnection c = super.openConnection(path);
 		c.setRequestProperty("Authorization", getBasicAuthId());
 		return c;

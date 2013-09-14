@@ -43,10 +43,13 @@ import org.xbmc.android.jsonrpc.io.ApiCallback;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -55,14 +58,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AlbumFragment extends AbstractXRFragment {
+public class AlbumFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
 
 	private ListView trackList;
 	private AlbumAdapter adapter;
 	private AlbumDetail album;
 
+	private View header;
+	private ImageView headerImg;
+	private TextView headerArtist;
+	private TextView headerAlbum;
+
 	public void setAlbum(AlbumDetail album) {
 		this.album = album;
+		state = album;
 	}
 
 	@Override
@@ -96,69 +105,41 @@ public class AlbumFragment extends AbstractXRFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		if (savedInstanceState != null)
+			album = savedInstanceState.getParcelable(AbstractXRFragment.STATE_KEY);
 		if (adapter == null)
 			adapter = new AlbumAdapter(getActivity(), new ArrayList<SongDetail>());
 
-		trackList = (ListView) inflater.inflate(R.layout.fragment_album, container, false);
+		if (trackList == null)
+			trackList = (ListView) inflater.inflate(R.layout.fragment_album, container, false);
 
-		View header = inflater.inflate(R.layout.track_list_header, trackList, false);
-		final ImageView image = (ImageView) header.findViewById(R.id.album_cover);
+		if (header == null) {
+			header = inflater.inflate(R.layout.track_list_header, trackList, false);
+			headerImg = (ImageView) header.findViewById(R.id.album_cover);
+			headerArtist = (TextView) header.findViewById(R.id.album_artist);
+			headerAlbum = (TextView) header.findViewById(R.id.album_name);
+			trackList.addHeaderView(header);
+		}
 
-		final ViewTreeObserver vto = image.getViewTreeObserver();
-		vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-		    public boolean onPreDraw() {
+		Log.d(">>>>>>>> Album", album.toString());
+		headerArtist.setText(album.displayartist);
+		headerAlbum.setText(album.title);
 
-				try {
-					XRApplication.getApplication(getActivity()).getPicasso()
-						.load("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"))
-						.resize(image.getMeasuredWidth(), image.getMeasuredHeight())
-						.centerCrop()
-						.placeholder(R.drawable.placeholder)
-						.into(image);
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-				// Unbind ourselves once we have triggered the load
-				image.getViewTreeObserver().removeOnPreDrawListener(this);
-
-		        return true;
-		    }
-		});
-
-		((TextView) header.findViewById(R.id.album_artist)).setText(album.displayartist);
-		((TextView) header.findViewById(R.id.album_name)).setText(album.title);
-
-		trackList.addHeaderView(header);
 		trackList.setAdapter(adapter);
+		trackList.setOnItemClickListener(this);
+		registerForContextMenu(trackList);
 
-		trackList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-				final SongDetail detail = adapter.getItem(pos - 1);
+		try {
+			XRApplication.getApplication(getActivity()).getPicasso()
+				.load("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"))
+				.centerCrop()
+				.fit()
+				.placeholder(R.drawable.placeholder)
+				.into(headerImg);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 
-				Context context = getActivity().getApplicationContext();
-				String text = "Track: " + Integer.toString(detail.track);
-				int duration = Toast.LENGTH_SHORT;
-
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
-
-				getConnectionManager().call(new Player.Open(new Item(new Songid(detail.songid))), new ApiCallback<String>() {
-
-					@Override
-					public void onResponse(AbstractCall<String> call) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onError(int code, String message, String hint) {
-						// TODO Auto-generated method stub
-
-					}
-				});
-			}
-		});
 		return trackList;
 	}
 
@@ -188,5 +169,50 @@ public class AlbumFragment extends AbstractXRFragment {
 	@Override
 	public CharSequence getTitle() {
 		return album == null? "" : album.title;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+		final SongDetail detail = adapter.getItem(pos - 1);
+
+		Context context = getActivity().getApplicationContext();
+		String text = "Track: " + Integer.toString(detail.track);
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
+
+		getConnectionManager().call(new Player.Open(new Item(new Songid(detail.songid))), new ApiCallback<String>() {
+
+			@Override
+			public void onResponse(AbstractCall<String> call) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onError(int code, String message, String hint) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+
+		menu.add("Test 1").setOnMenuItemClickListener(this);
+		menu.add("Test 2").setOnMenuItemClickListener(this);
+		menu.add("Test 3").setOnMenuItemClickListener(this);
+		menu.add("Test 4").setOnMenuItemClickListener(this);
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+
+		Log.d("MENU ITEM", item.toString());
+
+		return false;
 	}
 }

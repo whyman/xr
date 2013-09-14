@@ -116,7 +116,8 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 					.into(this.image);
 				XRApplication.getApplication(getActivity()).getPicasso()
 					.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
-					.skipCache()
+					.skipMemoryCache()
+					.fit()
 					.into(this.bigImage);
 			} else {
 				XRApplication.getApplication(getActivity()).getPicasso()

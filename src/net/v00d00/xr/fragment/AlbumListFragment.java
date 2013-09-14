@@ -51,7 +51,6 @@ import android.widget.Toast;
 
 public class AlbumListFragment extends AbstractXRFragment {
 
-	private Parcelable state;
 	private GridView gridView;
 	private AlbumListAdapter adapter;
 
@@ -86,6 +85,11 @@ public class AlbumListFragment extends AbstractXRFragment {
 			}
 		});
 
+		if (savedInstanceState != null) {
+			Parcelable par = savedInstanceState.getParcelable(AbstractXRFragment.STATE_KEY);
+			if (par != null)
+				gridView.onRestoreInstanceState(par);
+		}
 
 		return rootView;
 	}
@@ -161,4 +165,5 @@ public class AlbumListFragment extends AbstractXRFragment {
 	public CharSequence getTitle() {
 		return "Albums";
 	}
+
 }
