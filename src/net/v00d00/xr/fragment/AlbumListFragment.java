@@ -40,16 +40,20 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
-public class AlbumListFragment extends AbstractXRFragment {
+public class AlbumListFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
 
 	private GridView gridView;
 	private AlbumListAdapter adapter;
@@ -69,21 +73,8 @@ public class AlbumListFragment extends AbstractXRFragment {
 		gridView = (GridView) rootView.findViewById(R.id.album_grid);
 
 		gridView.setAdapter(adapter);
-		gridView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-				AlbumDetail detail = adapter.getItem(pos);
-
-				Context context = getActivity().getApplicationContext();
-				String text = "Album Id: " + Integer.toString(detail.albumid);
-				int duration = Toast.LENGTH_SHORT;
-
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
-
-				((Provider) getActivity()).showAlbumListing(detail);
-			}
-		});
+		gridView.setOnItemClickListener(this);
+		registerForContextMenu(gridView);
 
 		if (savedInstanceState != null) {
 			Parcelable par = savedInstanceState.getParcelable(AbstractXRFragment.STATE_KEY);
@@ -164,6 +155,38 @@ public class AlbumListFragment extends AbstractXRFragment {
 	@Override
 	public CharSequence getTitle() {
 		return "Albums";
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+
+		menu.add("Play Album").setOnMenuItemClickListener(this);
+		menu.add("Test 2").setOnMenuItemClickListener(this);
+		menu.add("Test 3").setOnMenuItemClickListener(this);
+		menu.add("Test 4").setOnMenuItemClickListener(this);
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+
+		Log.d("MENU ITEM", item.toString());
+
+		return false;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+		AlbumDetail detail = adapter.getItem(pos);
+
+		Context context = getActivity().getApplicationContext();
+		String text = "Album Id: " + Integer.toString(detail.albumid);
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
+
+		((Provider) getActivity()).showAlbumListing(detail);
 	}
 
 }

@@ -52,6 +52,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -121,7 +122,6 @@ public class AlbumFragment extends AbstractXRFragment implements OnItemClickList
 			trackList.addHeaderView(header);
 		}
 
-		Log.d(">>>>>>>> Album", album.toString());
 		headerArtist.setText(album.displayartist);
 		headerAlbum.setText(album.title);
 
