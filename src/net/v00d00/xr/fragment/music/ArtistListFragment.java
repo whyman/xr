@@ -18,12 +18,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-package net.v00d00.xr.fragment;
+package net.v00d00.xr.fragment.music;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import net.v00d00.xr.R;
+import net.v00d00.xr.fragment.AbstractXRFragment;
+import net.v00d00.xr.fragment.AbstractXRFragment.ConnectionManagerProvider;
 import net.v00d00.xr.view.CoverView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;

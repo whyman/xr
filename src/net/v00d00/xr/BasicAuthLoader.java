@@ -49,7 +49,6 @@ public class BasicAuthLoader extends UrlConnectionDownloader {
 
 			authId = "Basic " + Base64.encodeToString((user + ":" + pass).getBytes(), Base64.NO_WRAP);
 		}
-
 		return authId;
 	}
 

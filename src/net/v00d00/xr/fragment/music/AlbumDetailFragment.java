@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-package net.v00d00.xr.fragment;
+package net.v00d00.xr.fragment.music;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -27,6 +27,7 @@ import java.util.List;
 
 import net.v00d00.xr.R;
 import net.v00d00.xr.XRApplication;
+import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.view.TrackView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
@@ -52,14 +53,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AlbumFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
+public class AlbumDetailFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
 
 	private ListView trackList;
 	private AlbumAdapter adapter;

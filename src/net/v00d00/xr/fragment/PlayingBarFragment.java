@@ -26,6 +26,7 @@ import java.util.List;
 
 import net.v00d00.xr.R;
 import net.v00d00.xr.XRApplication;
+import net.v00d00.xr.XRUtils;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary.GetSongDetails;
@@ -48,7 +49,9 @@ import org.xbmc.android.jsonrpc.notification.PlayerObserver;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +61,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class PlayingBarFragment extends AbstractXRFragment implements NotificationObserver {
+
+	private String uriPrefix;
 
 	private RelativeLayout bar;
 	private TextView title;
@@ -103,20 +108,26 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 		}
 	}
 
+	private String getUriPrefix() {
+		if (uriPrefix == null) {
+			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			uriPrefix = sharedPref.getString("pref_user", "") + "/image/";
+		}
+		return uriPrefix;
+	}
+
 	private void showNowPlaying(String title, String subtitle, String image) {
 		this.title.setText(title);
 		this.subtitle.setText(subtitle);
 
-
 		try {
 			if (image != null) {
 				XRApplication.getApplication(getActivity()).getPicasso()
-					.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
+					.load(getUriPrefix() + URLEncoder.encode(image, "utf-8"))
 					.fit()
 					.into(this.image);
 				XRApplication.getApplication(getActivity()).getPicasso()
-					.load("http://192.168.1.100/image/" + URLEncoder.encode(image, "utf-8"))
-					.skipMemoryCache()
+					.load(getUriPrefix() + URLEncoder.encode(image, "utf-8"))
 					.fit()
 					.into(this.bigImage);
 			} else {

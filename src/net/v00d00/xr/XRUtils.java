@@ -3,7 +3,6 @@ package net.v00d00.xr;
 import android.content.Context;
 import android.content.res.Configuration;
 
-
 public class XRUtils {
 	public static CharSequence formatSeconds(int totalSecs) {
 		int hours = totalSecs / 3600;

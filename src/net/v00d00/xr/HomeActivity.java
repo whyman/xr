@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package net.v00d00.xr;
 
 import net.v00d00.xr.fragment.AbstractXRFragment;
-import net.v00d00.xr.fragment.AlbumFragment;
-import net.v00d00.xr.fragment.AlbumListFragment;
-import net.v00d00.xr.fragment.MusicFragment;
 import net.v00d00.xr.fragment.PlayingBarFragment;
 import net.v00d00.xr.fragment.SideMenuFragment;
+import net.v00d00.xr.fragment.music.AlbumDetailFragment;
+import net.v00d00.xr.fragment.music.AlbumListFragment;
+import net.v00d00.xr.fragment.music.MusicFragment;
 
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
@@ -33,7 +33,6 @@ import org.xbmc.android.jsonrpc.io.ConnectionManager;
 import android.app.ActionBar;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -48,12 +47,17 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-public class HomeActivity extends SlidingFragmentActivity implements AbstractXRFragment.ConnectionManagerProvider, AlbumListFragment.Provider, PlayingBarFragment.Provider {
+public class HomeActivity extends SlidingFragmentActivity implements
+			AbstractXRFragment.ConnectionManagerProvider,
+			AlbumListFragment.Provider,
+			PlayingBarFragment.Provider,
+			SideMenuFragment.Provider {
 
 	SlidingUpPanelLayout layout;
 	JsonRPC jsonrpc;
 
 	PlayingBarFragment playingBarFragment;
+	SlidingMenu sm;
 	SideMenuFragment menuFragment;
 
 	FrameLayout rightPane;
@@ -94,7 +98,7 @@ public class HomeActivity extends SlidingFragmentActivity implements AbstractXRF
 		setSlidingActionBarEnabled(false);
 
 		// customize the SlidingMenu
-		SlidingMenu sm = getSlidingMenu();
+		sm = getSlidingMenu();
 		sm.setBehindWidthRes(R.dimen.side_menu_width);
 		sm.setFadeEnabled(true);
 		sm.setFadeDegree(0.5f);
@@ -154,7 +158,7 @@ public class HomeActivity extends SlidingFragmentActivity implements AbstractXRF
 
 	@Override
 	public void showAlbumListing(AlbumDetail album) {
-		AlbumFragment af = new AlbumFragment();
+		AlbumDetailFragment af = new AlbumDetailFragment();
 		af.setAlbum(album);
 		setRightPane(af);
 	}
@@ -195,5 +199,35 @@ public class HomeActivity extends SlidingFragmentActivity implements AbstractXRF
 	@Override
 	public void setDragView(View view) {
 		layout.setDragView(view);
+	}
+
+	@Override
+	public void displayMusic() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void displayMovies() {
+		// TODO Auto-generated method stub
+		sm.showContent();
+	}
+
+	@Override
+	public void displayTVShows() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void displayPhotos() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void displayRemote() {
+		// TODO Auto-generated method stub
+
 	}
 }

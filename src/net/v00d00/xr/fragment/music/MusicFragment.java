@@ -1,8 +1,10 @@
-package net.v00d00.xr.fragment;
+package net.v00d00.xr.fragment.music;
 
 import java.util.ArrayList;
 
 import net.v00d00.xr.R;
+import net.v00d00.xr.fragment.AbstractXRFragment;
+import net.v00d00.xr.fragment.XRPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;

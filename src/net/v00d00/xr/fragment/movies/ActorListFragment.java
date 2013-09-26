@@ -18,19 +18,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-package net.v00d00.xr.fragment;
+package net.v00d00.xr.fragment.movies;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import net.v00d00.xr.R;
+import net.v00d00.xr.fragment.AbstractXRFragment;
+import net.v00d00.xr.fragment.AbstractXRFragment.ConnectionManagerProvider;
 import net.v00d00.xr.view.CoverView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
 import org.xbmc.android.jsonrpc.api.model.AudioModel;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
+import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 
 import android.content.Context;
@@ -45,22 +46,22 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
-public class SongListFragment extends AbstractXRFragment {
+public class ActorListFragment extends AbstractXRFragment {
 
 	private Parcelable state;
 	private GridView gridView;
 	private AlbumListAdapter adapter;
 
-	public interface SongListProvider extends ConnectionManagerProvider {
-		public void showAlbumListing(AlbumDetail album);
+	public interface ArtistListProvider extends ConnectionManagerProvider {
+
 	}
 
-	public SongListFragment() {}
+	public ActorListFragment() {}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (adapter == null)
-			adapter = new AlbumListAdapter(getActivity(), new ArrayList<SongDetail>());
+			adapter = new AlbumListAdapter(getActivity(), new ArrayList<ArtistDetail>());
 
 		View rootView = inflater.inflate(R.layout.fragment_albums, container, false);
 		gridView = (GridView) rootView.findViewById(R.id.album_grid);
@@ -82,22 +83,17 @@ public class SongListFragment extends AbstractXRFragment {
 			}
 		});
 
-
 		return rootView;
 	}
 
 	@Override
 	public void load() {
-		final AudioLibrary.GetSongs call = new AudioLibrary.GetSongs(
-				AudioModel.SongFields.ARTIST,
-				AudioModel.SongFields.TITLE,
-				AudioModel.SongFields.TRACK,
-				AudioModel.SongFields.DISPLAYARTIST,
-				AudioModel.SongFields.THUMBNAIL);
+		// create api call object
+		final AudioLibrary.GetArtists call = new AudioLibrary.GetArtists(AudioModel.ArtistDetail.THUMBNAIL);
 
 		// execute
-		getConnectionManager().call(call, new ApiCallback<SongDetail>() {
-		    public void onResponse(final AbstractCall<SongDetail> call) {
+		getConnectionManager().call(call, new ApiCallback<ArtistDetail>() {
+		    public void onResponse(final AbstractCall<ArtistDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
 				    	adapter.clear();
@@ -112,8 +108,8 @@ public class SongListFragment extends AbstractXRFragment {
 		});
 	}
 
-	private static class AlbumListAdapter extends ArrayAdapter<SongDetail> {
-		public AlbumListAdapter(Context context, List<SongDetail> items) {
+	private static class AlbumListAdapter extends ArrayAdapter<ArtistDetail> {
+		public AlbumListAdapter(Context context, List<ArtistDetail> items) {
 			super(context, 0, items);
 		}
 
@@ -126,10 +122,10 @@ public class SongListFragment extends AbstractXRFragment {
 				view = (CoverView) convertView;
 			}
 
-			final SongDetail song = getItem(position);;
+			final ArtistDetail artist = getItem(position);;
 			view.setPosition(position);
-			view.setTitle(song.title + ": " + song.displayartist);
-			view.setThumbnailPath(song.thumbnail);
+			view.setTitle(artist.artist);
+			view.setThumbnailPath(artist.thumbnail);
 
 			return view;
 		}
@@ -152,6 +148,6 @@ public class SongListFragment extends AbstractXRFragment {
 
 	@Override
 	public CharSequence getTitle() {
-		return "Songs";
+		return "Artists";
 	}
 }
