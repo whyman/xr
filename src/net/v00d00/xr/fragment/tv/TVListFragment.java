@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-package net.v00d00.xr.fragment.movies;
+package net.v00d00.xr.fragment.tv;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ import org.xbmc.android.jsonrpc.api.model.ListModel.Sort;
 import org.xbmc.android.jsonrpc.api.model.ListModel.Sort.Method;
 import org.xbmc.android.jsonrpc.api.model.ListModel.Sort.Order;
 import org.xbmc.android.jsonrpc.api.model.VideoModel;
-import org.xbmc.android.jsonrpc.api.model.VideoModel.MovieDetail;
+import org.xbmc.android.jsonrpc.api.model.VideoModel.TVShowDetail;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 
 import android.content.Context;
@@ -54,21 +54,21 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
-public class MovieListFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
+public class TVListFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
 
 	private GridView gridView;
-	private MovieListAdapter adapter;
+	private TVListAdapter adapter;
 
 	public interface Provider extends ConnectionManagerProvider {
-		public void showAlbumListing(MovieDetail album);
+		public void showAlbumListing(TVShowDetail album);
 	}
 
-	public MovieListFragment() {}
+	public TVListFragment() {}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (adapter == null)
-			adapter = new MovieListAdapter(getActivity(), new ArrayList<MovieDetail>());
+			adapter = new TVListAdapter(getActivity(), new ArrayList<TVShowDetail>());
 
 		View rootView = inflater.inflate(R.layout.fragment_albums, container, false);
 		gridView = (GridView) rootView.findViewById(R.id.album_grid);
@@ -91,11 +91,11 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 		ListModel.Sort sort = new Sort(true, Method.TITLE, Order.ASCENDING);
 
 		// create api call object
-		final VideoLibrary.GetMovies call = new VideoLibrary.GetMovies(sort, VideoModel.MovieFields.TITLE, VideoModel.MovieFields.THUMBNAIL);
+		final VideoLibrary.GetTVShows call = new VideoLibrary.GetTVShows(sort, VideoModel.TVShowDetail.TITLE, VideoModel.TVShowDetail.THUMBNAIL);
 
 		// execute
-		getConnectionManager().call(call, new ApiCallback<MovieDetail>() {
-		    public void onResponse(final AbstractCall<MovieDetail> call) {
+		getConnectionManager().call(call, new ApiCallback<TVShowDetail>() {
+		    public void onResponse(final AbstractCall<TVShowDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
 				    	adapter.clear();
@@ -110,8 +110,8 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 		});
 	}
 
-	private static class MovieListAdapter extends ArrayAdapter<MovieDetail> {
-		public MovieListAdapter(Context context, List<MovieDetail> items) {
+	private static class TVListAdapter extends ArrayAdapter<TVShowDetail> {
+		public TVListAdapter(Context context, List<TVShowDetail> items) {
 			super(context, 0, items);
 		}
 
@@ -124,7 +124,7 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 				view = (CoverView) convertView;
 			}
 
-			final MovieDetail album = getItem(position);;
+			final TVShowDetail album = getItem(position);;
 			view.setPosition(position);
 			view.setTitle(album.title);
 			view.setThumbnailPath(album.thumbnail, 1.4f);
@@ -150,7 +150,7 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 
 	@Override
 	public CharSequence getTitle() {
-		return "Movies";
+		return "Shows";
 	}
 
 	@Override
@@ -173,10 +173,10 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-		MovieDetail detail = adapter.getItem(pos);
+		TVShowDetail detail = adapter.getItem(pos);
 
 		Context context = getActivity().getApplicationContext();
-		String text = "Movie Id: " + Integer.toString(detail.movieid);
+		String text = "Movie Id: " + Integer.toString(detail.tvshowid);
 		int duration = Toast.LENGTH_SHORT;
 
 		Toast toast = Toast.makeText(context, text, duration);

@@ -25,13 +25,11 @@ import java.util.List;
 
 import net.v00d00.xr.R;
 import net.v00d00.xr.fragment.AbstractXRFragment;
-import net.v00d00.xr.fragment.AbstractXRFragment.ConnectionManagerProvider;
 import net.v00d00.xr.view.CoverView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
-import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
-import org.xbmc.android.jsonrpc.api.model.AudioModel;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
+import org.xbmc.android.jsonrpc.api.call.VideoLibrary;
+import org.xbmc.android.jsonrpc.api.model.LibraryModel.GenreDetail;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 
 import android.content.Context;
@@ -46,22 +44,18 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
-public class ActorListFragment extends AbstractXRFragment {
+public class GenreListFragment extends AbstractXRFragment {
 
 	private Parcelable state;
 	private GridView gridView;
-	private AlbumListAdapter adapter;
+	private GenreListAdapter adapter;
 
-	public interface ArtistListProvider extends ConnectionManagerProvider {
-
-	}
-
-	public ActorListFragment() {}
+	public GenreListFragment() {}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (adapter == null)
-			adapter = new AlbumListAdapter(getActivity(), new ArrayList<ArtistDetail>());
+			adapter = new GenreListAdapter(getActivity(), new ArrayList<GenreDetail>());
 
 		View rootView = inflater.inflate(R.layout.fragment_albums, container, false);
 		gridView = (GridView) rootView.findViewById(R.id.album_grid);
@@ -89,11 +83,11 @@ public class ActorListFragment extends AbstractXRFragment {
 	@Override
 	public void load() {
 		// create api call object
-		final AudioLibrary.GetArtists call = new AudioLibrary.GetArtists(AudioModel.ArtistDetail.THUMBNAIL);
+		final VideoLibrary.GetGenres call = new VideoLibrary.GetGenres(VideoLibrary.GetGenres.Type.MOVIE);
 
 		// execute
-		getConnectionManager().call(call, new ApiCallback<ArtistDetail>() {
-		    public void onResponse(final AbstractCall<ArtistDetail> call) {
+		getConnectionManager().call(call, new ApiCallback<GenreDetail>() {
+		    public void onResponse(final AbstractCall<GenreDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
 				    	adapter.clear();
@@ -108,8 +102,8 @@ public class ActorListFragment extends AbstractXRFragment {
 		});
 	}
 
-	private static class AlbumListAdapter extends ArrayAdapter<ArtistDetail> {
-		public AlbumListAdapter(Context context, List<ArtistDetail> items) {
+	private static class GenreListAdapter extends ArrayAdapter<GenreDetail> {
+		public GenreListAdapter(Context context, List<GenreDetail> items) {
 			super(context, 0, items);
 		}
 
@@ -122,10 +116,9 @@ public class ActorListFragment extends AbstractXRFragment {
 				view = (CoverView) convertView;
 			}
 
-			final ArtistDetail artist = getItem(position);;
+			final GenreDetail genre = getItem(position);;
 			view.setPosition(position);
-			view.setTitle(artist.artist);
-			view.setThumbnailPath(artist.thumbnail);
+			view.setTitle(genre.title);
 
 			return view;
 		}
@@ -148,6 +141,6 @@ public class ActorListFragment extends AbstractXRFragment {
 
 	@Override
 	public CharSequence getTitle() {
-		return "Artists";
+		return "Genres";
 	}
 }

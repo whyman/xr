@@ -1,4 +1,4 @@
-package net.v00d00.xr.fragment.movies;
+package net.v00d00.xr.fragment.tv;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import com.viewpagerindicator.TitlePageIndicator;
 
 
-public class MovieFragment extends Fragment {
+public class TVFragment extends Fragment {
 
 	XRPagerAdapter adapter = null;
 	ViewPager pager;
@@ -32,11 +32,8 @@ public class MovieFragment extends Fragment {
 			adapter = new XRPagerAdapter(getChildFragmentManager());
 			ArrayList<AbstractXRFragment> fl = new ArrayList<AbstractXRFragment>();
 
-			MovieListFragment albumListFragment = new MovieListFragment();
+			TVListFragment albumListFragment = new TVListFragment();
 			fl.add(albumListFragment);
-
-			GenreListFragment artistListFragment = new GenreListFragment();
-			fl.add(artistListFragment);
 
 			adapter.setFragmentList(fl);
 		}

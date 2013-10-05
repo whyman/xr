@@ -23,9 +23,11 @@ package net.v00d00.xr;
 import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.fragment.PlayingBarFragment;
 import net.v00d00.xr.fragment.SideMenuFragment;
+import net.v00d00.xr.fragment.movies.MovieFragment;
 import net.v00d00.xr.fragment.music.AlbumDetailFragment;
 import net.v00d00.xr.fragment.music.AlbumListFragment;
 import net.v00d00.xr.fragment.music.MusicFragment;
+import net.v00d00.xr.fragment.tv.TVFragment;
 
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
@@ -56,6 +58,10 @@ public class HomeActivity extends SlidingFragmentActivity implements
 	SlidingUpPanelLayout layout;
 	JsonRPC jsonrpc;
 
+	MusicFragment musicFragment;
+	MovieFragment movieFragment;
+	TVFragment tvFragment;
+
 	PlayingBarFragment playingBarFragment;
 	SlidingMenu sm;
 	SideMenuFragment menuFragment;
@@ -85,11 +91,9 @@ public class HomeActivity extends SlidingFragmentActivity implements
 
 			playingBarFragment = new PlayingBarFragment();
 			jsonrpc.getConnectionManager().registerObserver(playingBarFragment);
-			t.replace(R.id.bottom_pane, playingBarFragment);
+			t.replace(R.id.bottom_pane, playingBarFragment).commit();
 
-			t.replace(R.id.left_pane, new MusicFragment());
-
-			t.commit();
+			displayMusic();
 		} else {
 			menuFragment = (SideMenuFragment) getSupportFragmentManager().findFragmentById(R.id.side_menu_frame);
 			playingBarFragment = (PlayingBarFragment) getSupportFragmentManager().findFragmentById(R.id.bottom_pane);
@@ -203,20 +207,29 @@ public class HomeActivity extends SlidingFragmentActivity implements
 
 	@Override
 	public void displayMusic() {
-		// TODO Auto-generated method stub
-
+		if (musicFragment == null)
+			musicFragment = new MusicFragment();
+		FragmentManager fm = getSupportFragmentManager();
+		fm.beginTransaction().replace(R.id.left_pane, musicFragment).commit();
+		hideMenu();
 	}
 
 	@Override
 	public void displayMovies() {
-		// TODO Auto-generated method stub
-		sm.showContent();
+		if (movieFragment == null)
+			movieFragment = new MovieFragment();
+		FragmentManager fm = getSupportFragmentManager();
+		fm.beginTransaction().replace(R.id.left_pane, movieFragment).commit();
+		hideMenu();
 	}
 
 	@Override
 	public void displayTVShows() {
-		// TODO Auto-generated method stub
-
+		if (tvFragment == null)
+			tvFragment = new TVFragment();
+		FragmentManager fm = getSupportFragmentManager();
+		fm.beginTransaction().replace(R.id.left_pane, tvFragment).commit();
+		hideMenu();
 	}
 
 	@Override
@@ -229,5 +242,10 @@ public class HomeActivity extends SlidingFragmentActivity implements
 	public void displayRemote() {
 		// TODO Auto-generated method stub
 
+	}
+
+	private void hideMenu() {
+		if (sm != null)
+			sm.showContent();
 	}
 }

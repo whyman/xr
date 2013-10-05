@@ -26,16 +26,18 @@ import java.net.URLEncoder;
 import net.v00d00.xr.R;
 import net.v00d00.xr.XRApplication;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class CoverView extends RelativeLayout {
 
+	private float heightRatio = 1.0f;
+	private String uriPrefix;
 	private int position = 0;
 	private TextView title;
 	private ImageView image;
@@ -61,16 +63,20 @@ public class CoverView extends RelativeLayout {
 	}
 
 	public void setThumbnailPath(String path) {
-		Log.d("SET_THUMB", path);
 		try {
 			XRApplication.getApplication(getContext()).getPicasso()
-				.load("http://192.168.1.100/image/" + URLEncoder.encode(path, "utf-8"))
+				.load(getUriPrefix() + URLEncoder.encode(path, "utf-8"))
 				.placeholder(R.drawable.placeholder)
 				.fit()
 				.into(image);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setThumbnailPath(String path, float heightRatio) {
+		this.heightRatio = heightRatio;
+		setThumbnailPath(path);
 	}
 
 	public int getPosition() {
@@ -86,8 +92,16 @@ public class CoverView extends RelativeLayout {
 	    // Restrict the aspect ratio to 1:1, fitting within original specified dimensions
 	    int width = MeasureSpec.getSize(widthMeasureSpec);;
 	    widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
-	    heightMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+	    heightMeasureSpec = MeasureSpec.makeMeasureSpec((int)(width * heightRatio), MeasureSpec.EXACTLY);
 
 	    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+	}
+
+	private String getUriPrefix() {
+		if (uriPrefix == null) {
+			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+			uriPrefix = "http://" + sharedPref.getString("pref_host", "") + "/image/";
+		}
+		return uriPrefix;
 	}
 }

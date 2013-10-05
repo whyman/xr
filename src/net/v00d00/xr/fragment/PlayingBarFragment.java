@@ -111,7 +111,7 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 	private String getUriPrefix() {
 		if (uriPrefix == null) {
 			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			uriPrefix = sharedPref.getString("pref_user", "") + "/image/";
+			uriPrefix = "http://" + sharedPref.getString("pref_host", "") + "/image/";
 		}
 		return uriPrefix;
 	}
