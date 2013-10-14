@@ -20,14 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package net.v00d00.xr.fragment.music;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.v00d00.xr.R;
-import net.v00d00.xr.XRApplication;
 import net.v00d00.xr.fragment.AbstractXRFragment;
+import net.v00d00.xr.view.FixedRatioImageView;
 import net.v00d00.xr.view.TrackView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
@@ -54,7 +52,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +63,7 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 	private AlbumDetail album;
 
 	private View header;
-	private ImageView headerImg;
+	private FixedRatioImageView headerImg;
 	private TextView headerArtist;
 	private TextView headerAlbum;
 
@@ -116,7 +113,7 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 
 		if (header == null) {
 			header = inflater.inflate(R.layout.track_list_header, trackList, false);
-			headerImg = (ImageView) header.findViewById(R.id.album_cover);
+			headerImg = (FixedRatioImageView) header.findViewById(R.id.album_cover);
 			headerArtist = (TextView) header.findViewById(R.id.album_artist);
 			headerAlbum = (TextView) header.findViewById(R.id.album_name);
 			trackList.addHeaderView(header);
@@ -129,16 +126,7 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 		trackList.setOnItemClickListener(this);
 		registerForContextMenu(trackList);
 
-		try {
-			XRApplication.getApplication(getActivity()).getPicasso()
-				.load("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"))
-				.centerCrop()
-				.fit()
-				.placeholder(R.drawable.placeholder)
-				.into(headerImg);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		headerImg.setThumbnailPath(album.thumbnail);
 
 		return trackList;
 	}

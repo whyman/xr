@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-    <ImageView
+    <net.v00d00.xr.view.FixedRatioImageView
         android:id="@+id/cover_view_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ff000000"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+    />
 
     <TextView
 		android:textColor="@android:color/white"
