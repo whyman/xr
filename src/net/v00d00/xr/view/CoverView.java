@@ -30,14 +30,14 @@ public class CoverView extends RelativeLayout {
 
 	private int position = 0;
 	private TextView title;
-	private FixedRatioImageView image;
+	private FixedHeightRatioImageView image;
 
 	public CoverView(Context context) {
 		super(context);
 		LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.cover_view, this, true);
 
-		image = (FixedRatioImageView) findViewById(R.id.cover_view_background);
+		image = (FixedHeightRatioImageView) findViewById(R.id.cover_view_background);
 		title = (TextView) findViewById(R.id.cover_view_title);
 	}
 

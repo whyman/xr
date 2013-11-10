@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-    <net.v00d00.xr.view.FixedRatioImageView
+    <net.v00d00.xr.view.FixedHeightRatioImageView
         android:id="@+id/cover_view_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -25,7 +25,7 @@ import java.util.List;
 
 import net.v00d00.xr.R;
 import net.v00d00.xr.fragment.AbstractXRFragment;
-import net.v00d00.xr.view.FixedRatioImageView;
+import net.v00d00.xr.view.FixedHeightRatioImageView;
 import net.v00d00.xr.view.TrackView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
@@ -63,7 +63,7 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 	private AlbumDetail album;
 
 	private View header;
-	private FixedRatioImageView headerImg;
+	private FixedHeightRatioImageView headerImg;
 	private TextView headerArtist;
 	private TextView headerAlbum;
 
@@ -113,7 +113,7 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 
 		if (header == null) {
 			header = inflater.inflate(R.layout.track_list_header, trackList, false);
-			headerImg = (FixedRatioImageView) header.findViewById(R.id.album_cover);
+			headerImg = (FixedHeightRatioImageView) header.findViewById(R.id.album_cover);
 			headerArtist = (TextView) header.findViewById(R.id.album_artist);
 			headerAlbum = (TextView) header.findViewById(R.id.album_name);
 			trackList.addHeaderView(header);

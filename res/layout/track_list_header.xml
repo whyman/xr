@@ -3,7 +3,7 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content">
 
-    <net.v00d00.xr.view.FixedRatioImageView
+    <net.v00d00.xr.view.FixedHeightRatioImageView
         android:id="@+id/album_cover"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

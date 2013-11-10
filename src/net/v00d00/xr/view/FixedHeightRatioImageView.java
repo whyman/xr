@@ -20,45 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package net.v00d00.xr.view;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import net.v00d00.xr.R;
-import net.v00d00.xr.XRApplication;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
-public class FixedRatioImageView extends ImageView {
+public class FixedHeightRatioImageView extends ThumbnailView {
 
 	private float heightRatio = 1.0f;
-	private String uriPrefix;
 
-	public FixedRatioImageView(Context context) {
+	public FixedHeightRatioImageView(Context context) {
 		super(context);
 	}
 
-	public FixedRatioImageView(Context context, AttributeSet attributes) {
+	public FixedHeightRatioImageView(Context context, AttributeSet attributes) {
 		super(context, attributes);
 	}
 
-	public FixedRatioImageView(Context context, String thumbnailPath) {
+	public FixedHeightRatioImageView(Context context, String thumbnailPath) {
 		this(context);
 		setThumbnailPath(thumbnailPath);
-	}
-
-	public void setThumbnailPath(String path) {
-		try {
-			XRApplication.getApplication(getContext()).getPicasso()
-				.load(getUriPrefix() + URLEncoder.encode(path, "utf-8"))
-				.placeholder(R.drawable.placeholder)
-				.fit()
-				.into(this);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void setThumbnailPath(String path, float heightRatio) {
@@ -74,13 +53,5 @@ public class FixedRatioImageView extends ImageView {
 	    heightMeasureSpec = MeasureSpec.makeMeasureSpec((int)(width * heightRatio), MeasureSpec.EXACTLY);
 
 	    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-	}
-
-	private String getUriPrefix() {
-		if (uriPrefix == null) {
-			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-			uriPrefix = "http://" + sharedPref.getString("pref_host", "") + "/image/";
-		}
-		return uriPrefix;
 	}
 }

@@ -10,6 +10,6 @@
 	android:gravity="center"
 	android:numColumns="auto_fit"
 	android:isScrollContainer="true"
-	android:columnWidth="149dp"
+	android:columnWidth="106dp"
 	android:stretchMode="columnWidth"
 />

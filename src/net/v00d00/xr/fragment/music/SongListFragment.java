@@ -25,7 +25,6 @@ import java.util.List;
 
 import net.v00d00.xr.R;
 import net.v00d00.xr.fragment.AbstractXRFragment;
-import net.v00d00.xr.fragment.AbstractXRFragment.ConnectionManagerProvider;
 import net.v00d00.xr.view.CoverView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
@@ -35,6 +34,7 @@ import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -100,13 +100,16 @@ public class SongListFragment extends AbstractXRFragment {
 		// execute
 		getConnectionManager().call(call, new ApiCallback<SongDetail>() {
 		    public void onResponse(final AbstractCall<SongDetail> call) {
-		    	getActivity().runOnUiThread(new Runnable() {
-		    		public void run() {
-				    	adapter.clear();
-				        adapter.addAll(call.getResults());
-				        adapter.notifyDataSetChanged();
-		    		}
-		    	});
+		    	Activity activity = getActivity();
+		    	if (activity != null) {
+		    		activity.runOnUiThread(new Runnable() {
+				    	public void run() {
+					    	adapter.clear();
+					        adapter.addAll(call.getResults());
+					        adapter.notifyDataSetChanged();
+				    	}
+		    		});
+		    	}
 		    }
 		    public void onError(int code, String message, String hint) {
 		        Log.d("TEST", "Error " + code + ": " + message + hint);

@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@android:color/black"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-	    android:layout_height="70dp"
-		android:orientation="horizontal"
-		android:background="@drawable/holo_blue_top_border">
-
 	    <RelativeLayout
-	        android:layout_width="0dp"
-		    android:layout_height="wrap_content"
+	        android:background="@drawable/holo_blue_top_border"
+	        android:layout_height="70dp"
+	        android:layout_width="match_parent"
 	        android:id="@+id/now_playing_bar"
 	        android:layout_weight="1">
 
-			<ImageView
+			<net.v00d00.xr.view.FixedHeightImageView
 			    android:id="@+id/now_playing_bar_img"
-			    android:layout_width="wrap_content"
+			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:layout_alignParentLeft="true"
 			    android:layout_alignParentTop="true"
 			    android:layout_marginTop="2dp"
-			    android:adjustViewBounds="true"
 			    android:scaleType="centerInside"
 			    android:src="@drawable/placeholder" />
 
@@ -52,7 +46,29 @@
 
 		</RelativeLayout>
 
-    	<ImageButton
+
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@color/red" >
+
+		<net.v00d00.xr.view.FixedHeightRatioImageView
+		    android:id="@+id/now_playing_bar_img_big"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_alignParentTop="true"
+		    android:layout_marginTop="0dp"
+		    android:adjustViewBounds="true"
+		    android:scaleType="centerCrop"
+		    android:src="@drawable/placeholder" />
+
+	</RelativeLayout>
+
+	<LinearLayout
+	    android:layout_height="70dp"
+	    android:layout_width="match_parent"
+		android:orientation="horizontal">
+	    <ImageButton
 		    android:id="@+id/now_playing_bar_previous"
 		    style="@style/NowPlayingButton"
 		    android:src="@drawable/xr_holo_dark_previous" />
@@ -68,23 +84,4 @@
 		    android:src="@drawable/apollo_holo_dark_next" />
 
     </LinearLayout>
-
-
-	<RelativeLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:background="@color/red" >
-
-		<ImageView
-		    android:id="@+id/now_playing_bar_img_big"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    android:layout_alignParentTop="true"
-		    android:layout_marginTop="0dp"
-		    android:adjustViewBounds="true"
-		    android:scaleType="centerCrop"
-		    android:src="@drawable/placeholder" />
-
-	</RelativeLayout>
-
 </LinearLayout>

@@ -61,8 +61,8 @@ public abstract class AbstractXRFragment extends Fragment {
 	public abstract CharSequence getTitle();
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
 		if (state == null)
 			Log.d("AbstractXRFragment", "Calling load()");
 			load();
