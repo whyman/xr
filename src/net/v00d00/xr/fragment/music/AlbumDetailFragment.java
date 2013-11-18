@@ -23,6 +23,7 @@ package net.v00d00.xr.fragment.music;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.v00d00.xr.PlaylistHandler;
 import net.v00d00.xr.R;
 import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.view.FixedHeightRatioImageView;
@@ -36,27 +37,31 @@ import org.xbmc.android.jsonrpc.api.model.AudioModel;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item;
+import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.Albumid;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.Songid;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 
 import android.content.Context;
+import android.media.audiofx.AudioEffect.OnControlStatusChangeListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AlbumDetailFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
+public class AlbumDetailFragment extends AbstractXRFragment implements OnItemClickListener {
 
 	private ListView trackList;
 	private AlbumAdapter adapter;
@@ -163,13 +168,6 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
 		final SongDetail detail = adapter.getItem(pos - 1);
 
-		Context context = getActivity().getApplicationContext();
-		String text = "Track: " + Integer.toString(detail.track);
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
-
 		getConnectionManager().call(new Player.Open(new Item(new Songid(detail.songid))), new ApiCallback<String>() {
 
 			@Override
@@ -190,17 +188,22 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		menu.add("Test 1").setOnMenuItemClickListener(this);
-		menu.add("Test 2").setOnMenuItemClickListener(this);
-		menu.add("Test 3").setOnMenuItemClickListener(this);
-		menu.add("Test 4").setOnMenuItemClickListener(this);
+		MenuInflater inflater = getActivity().getMenuInflater();
+	    inflater.inflate(R.menu.album_context, menu);
 	}
 
 	@Override
-	public boolean onMenuItemClick(MenuItem item) {
+	public boolean onContextItemSelected(MenuItem item) {
 
 		Log.d("MENU ITEM", item.toString());
 
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	    int index = info.position;
+	    View view = info.targetView;
+
+	    PlaylistHandler.playAlbum(getConnectionManager(), new Albumid(album.albumid), 0);
+
 		return false;
 	}
+
 }

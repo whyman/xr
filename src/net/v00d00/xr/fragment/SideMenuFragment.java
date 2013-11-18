@@ -36,11 +36,11 @@ public class SideMenuFragment extends ListFragment {
 		super.onActivityCreated(savedInstanceState);
 		SampleAdapter adapter = new SampleAdapter(getActivity());
 
-		adapter.add(new MenuItem(R.string.menu_music, android.R.drawable.ic_menu_view));
-		adapter.add(new MenuItem(R.string.menu_movies, android.R.drawable.ic_menu_view));
-		adapter.add(new MenuItem(R.string.menu_tv, android.R.drawable.ic_menu_view));
-		adapter.add(new MenuItem(R.string.menu_images, android.R.drawable.ic_menu_view));
-		adapter.add(new MenuItem(R.string.menu_remote, android.R.drawable.ic_menu_compass));
+		adapter.add(new MenuItem(R.string.menu_music, R.drawable.icon_home_music));
+		adapter.add(new MenuItem(R.string.menu_movies, R.drawable.icon_home_movie));
+		adapter.add(new MenuItem(R.string.menu_tv, R.drawable.icon_home_tv));
+		adapter.add(new MenuItem(R.string.menu_images, R.drawable.icon_home_picture));
+		adapter.add(new MenuItem(R.string.menu_remote, R.drawable.icon_home_remote));
 
 		setListAdapter(adapter);
 	}

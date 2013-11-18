@@ -7,8 +7,8 @@
     android:layout_gravity="bottom"
 
     android:gravity="center"
-    android:fastScrollEnabled="true"
     android:horizontalSpacing="1dp"
+    android:fastScrollEnabled="true"
     android:isScrollContainer="true"
     android:verticalSpacing="1dp">
 </ListView>

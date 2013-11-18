@@ -6,9 +6,11 @@
 
     <ImageView
         android:id="@+id/side_menu_row_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:padding="10dp" />
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+	/>
 
     <TextView
         android:id="@+id/row_title"

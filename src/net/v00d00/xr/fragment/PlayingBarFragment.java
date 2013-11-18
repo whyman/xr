@@ -35,6 +35,8 @@ import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
 import org.xbmc.android.jsonrpc.api.model.ListModel;
 import org.xbmc.android.jsonrpc.api.model.ListModel.AllItems;
 import org.xbmc.android.jsonrpc.api.model.ListModel.BaseItem;
+import org.xbmc.android.jsonrpc.api.model.PlayerModel;
+import org.xbmc.android.jsonrpc.api.model.PlayerModel.Speed;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 import org.xbmc.android.jsonrpc.io.ConnectionManager.NotificationObserver;
 import org.xbmc.android.jsonrpc.notification.PlayerEvent;
@@ -48,20 +50,29 @@ import org.xbmc.android.jsonrpc.notification.PlayerObserver;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PlayingBarFragment extends AbstractXRFragment implements NotificationObserver {
+public class PlayingBarFragment extends AbstractXRFragment implements NotificationObserver, OnClickListener {
 
 	private RelativeLayout bar;
 	private TextView title;
 	private FixedHeightImageView image;
 	private TextView subtitle;
 	private FixedHeightRatioImageView bigImage;
+
+	private ImageButton prev;
+	private ImageButton pause;
+	private ImageButton next;
 
 	public interface Provider {
 		public void setDragView(View view);
@@ -115,15 +126,39 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 
 		View view = inflater.inflate(R.layout.playing, container, false);
 
-		bar = (RelativeLayout) view.findViewById(R.id.now_playing_bar);
-		image = (FixedHeightImageView) view.findViewById(R.id.now_playing_bar_img);
-		title = (TextView) view.findViewById(R.id.now_playing_bar_title);
-		subtitle = (TextView) view.findViewById(R.id.now_playing_bar_subtitle);
-		bigImage = (FixedHeightRatioImageView) view.findViewById(R.id.now_playing_bar_img_big);
+		if (bar == null)
+			bar = (RelativeLayout) view.findViewById(R.id.now_playing_bar);
+		if (image == null)
+			image = (FixedHeightImageView) view.findViewById(R.id.now_playing_bar_img);
+		if (title == null)
+			title = (TextView) view.findViewById(R.id.now_playing_bar_title);
+		if (subtitle == null)
+			subtitle = (TextView) view.findViewById(R.id.now_playing_bar_subtitle);
+		if (bigImage == null) {
+			bigImage = (FixedHeightRatioImageView) view.findViewById(R.id.now_playing_bar_img_big);
+			bigImage.setOnClickListener(this);
+		}
+		if (prev == null) {
+			prev = (ImageButton) view.findViewById(R.id.now_playing_bar_previous);
+			prev.setOnClickListener(this);
+		}
+		if (pause == null) {
+			pause = (ImageButton) view.findViewById(R.id.now_playing_bar_pause);
+			pause.setOnClickListener(this);
+		}
+		if (next == null) {
+			next = (ImageButton) view.findViewById(R.id.now_playing_bar_next);
+			next.setOnClickListener(this);
+		}
+
+
+
 
 		// Make marquee mode work
 		title.setSelected(true);
 		subtitle.setSelected(true);
+
+
 
 		Activity activity = getActivity();
 		if (activity instanceof Provider)
@@ -149,13 +184,12 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 								AllItems items = call.getResult();
 								showNowPlaying(items.title, items.displayartist, items.thumbnail);
 							}
-
 							@Override
 							public void onError(int code, String message, String hint) {
 								// TODO Auto-generated method stub
-
 							}
 						});
+						break;
 					}
 			}
 
@@ -193,4 +227,68 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 	public CharSequence getTitle() {
 		return "Now Playing";
 	}
+
+	@Override
+	public void onClick(View v) {
+		Log.d("onClick", v.toString());
+		Log.d("OnClick", Integer.toString(v.getId()));
+		if (v.getId() == R.id.now_playing_bar_pause)
+			doPlayerPause();
+		else if (v.getId() == R.id.now_playing_bar_next)
+			doPlayerNext();
+
+	}
+
+	void doPlayerPause() {
+		getConnectionManager().call(new Player.GetActivePlayers(), new ApiCallback<GetActivePlayers.GetActivePlayersResult>() {
+			@Override
+			public void onResponse(AbstractCall<GetActivePlayersResult> call) {
+				List<GetActivePlayersResult> players = call.getResults();
+				for (GetActivePlayersResult player : players) {
+					getConnectionManager().call(new Player.PlayPause(player.playerid), new ApiCallback<PlayerModel.Speed>() {
+						@Override
+						public void onResponse(AbstractCall<Speed> call) {
+							Log.d("PlayPause", "Call OK!");
+						}
+						@Override
+						public void onError(int code, String message,
+								String hint) {
+							Log.d("PlayPause", "Call Error!!");
+						}
+					});
+				}
+			}
+			@Override
+			public void onError(int code, String message, String hint) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+
+	void doPlayerNext() {
+		getConnectionManager().call(new Player.GetActivePlayers(), new ApiCallback<GetActivePlayers.GetActivePlayersResult>() {
+			@Override
+			public void onResponse(AbstractCall<GetActivePlayersResult> call) {
+				List<GetActivePlayersResult> players = call.getResults();
+				for (GetActivePlayersResult player : players) {
+					getConnectionManager().call(new Player.GoTo(player.playerid, Player.GoTo.To.NEXT), new ApiCallback<String>() {
+						@Override
+						public void onResponse(AbstractCall<String> call) {
+							Log.d("Next", "Call OK!");
+						}
+						@Override
+						public void onError(int code, String message,
+								String hint) {
+							Log.d("PlayPause", "Call Error!!");
+						}
+					});
+				}
+			}
+			@Override
+			public void onError(int code, String message, String hint) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+
 }

@@ -41,13 +41,16 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 
 public class HomeActivity extends SlidingFragmentActivity implements
 			AbstractXRFragment.ConnectionManagerProvider,
@@ -105,7 +108,7 @@ public class HomeActivity extends SlidingFragmentActivity implements
 		sm = getSlidingMenu();
 		sm.setBehindWidthRes(R.dimen.side_menu_width);
 		sm.setFadeEnabled(true);
-		sm.setFadeDegree(0.5f);
+		sm.setFadeDegree(0.9f);
 		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
 		sm.setBehindScrollScale(0.5f);
 		sm.setShadowDrawable(R.drawable.shadow);
@@ -116,7 +119,6 @@ public class HomeActivity extends SlidingFragmentActivity implements
 			ab.setDisplayHomeAsUpEnabled(true);
 			ab.setDisplayShowTitleEnabled(false);
 		}
-
 	}
 
 	@Override

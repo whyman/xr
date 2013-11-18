@@ -23,6 +23,8 @@ package net.v00d00.xr.view;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import com.squareup.picasso.Picasso;
+
 import net.v00d00.xr.R;
 import net.v00d00.xr.XRApplication;
 import android.content.Context;
@@ -50,13 +52,26 @@ public class ThumbnailView extends ImageView {
 	}
 
 	public void setThumbnailPath(String path) {
+		setThumbnailPath(path, false);
+	}
+
+	public void setThumbnailPath(String path, boolean skipCache) {
 		try {
 			if (path != null && path.length() > 0) {
-			XRApplication.getApplication(getContext()).getPicasso()
-				.load(getUriPrefix() + URLEncoder.encode(path, "utf-8"))
-				.placeholder(R.drawable.placeholder)
-				.fit()
-				.into(this);
+				if (skipCache) {
+					XRApplication.getApplication(getContext()).getPicasso()
+						.load(getUriPrefix() + URLEncoder.encode(path, "utf-8"))
+						.placeholder(R.drawable.placeholder)
+						.skipMemoryCache()
+						.fit()
+						.into(this);
+				} else {
+					XRApplication.getApplication(getContext()).getPicasso()
+					.load(getUriPrefix() + URLEncoder.encode(path, "utf-8"))
+					.placeholder(R.drawable.placeholder)
+					.fit()
+					.into(this);
+				}
 			} else {
 				XRApplication.getApplication(getContext()).getPicasso()
 				.load(R.drawable.placeholder)

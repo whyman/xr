@@ -76,6 +76,8 @@ public class AlbumListFragment extends AbstractXRFragment implements OnItemClick
 
 		gridView.setAdapter(adapter);
 		gridView.setOnItemClickListener(this);
+		gridView.setFastScrollEnabled(true);
+		gridView.setScrollContainer(true);
 		registerForContextMenu(gridView);
 
 		if (savedInstanceState != null) {

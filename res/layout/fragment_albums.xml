@@ -9,7 +9,8 @@
 	android:horizontalSpacing="1dp"
 	android:gravity="center"
 	android:numColumns="auto_fit"
-	android:isScrollContainer="true"
 	android:columnWidth="106dp"
 	android:stretchMode="columnWidth"
+	android:fastScrollEnabled="true"
+    android:isScrollContainer="true"
 />

@@ -71,17 +71,20 @@
 	    <ImageButton
 		    android:id="@+id/now_playing_bar_previous"
 		    style="@style/NowPlayingButton"
-		    android:src="@drawable/xr_holo_dark_previous" />
+		    android:src="@drawable/xr_holo_dark_previous"
+		    android:onClick="onPressPrev" />
 
 		<ImageButton
 		    android:id="@+id/now_playing_bar_pause"
 		    style="@style/NowPlayingButton"
-		    android:src="@drawable/apollo_holo_dark_pause" />
+		    android:src="@drawable/apollo_holo_dark_pause"
+		    android:onClick="onPressPause" />
 
 		<ImageButton
 		    android:id="@+id/now_playing_bar_next"
 		    style="@style/NowPlayingButton"
-		    android:src="@drawable/apollo_holo_dark_next" />
+		    android:src="@drawable/apollo_holo_dark_next"
+		    android:onClick="onPressNext" />
 
     </LinearLayout>
 </LinearLayout>
