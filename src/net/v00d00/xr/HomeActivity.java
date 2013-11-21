@@ -33,6 +33,7 @@ import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -41,16 +42,13 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 
 public class HomeActivity extends SlidingFragmentActivity implements
 			AbstractXRFragment.ConnectionManagerProvider,
@@ -58,19 +56,19 @@ public class HomeActivity extends SlidingFragmentActivity implements
 			PlayingBarFragment.Provider,
 			SideMenuFragment.Provider {
 
-	SlidingUpPanelLayout layout;
-	JsonRPC jsonrpc;
+	private SlidingUpPanelLayout layout;
+	private JsonRPC jsonrpc;
 
-	MusicFragment musicFragment;
-	MovieFragment movieFragment;
-	TVFragment tvFragment;
+	private MusicFragment musicFragment;
+	private MovieFragment movieFragment;
+	private TVFragment tvFragment;
 
-	PlayingBarFragment playingBarFragment;
-	SlidingMenu sm;
-	SideMenuFragment menuFragment;
+	private PlayingBarFragment playingBarFragment;
+	private SlidingMenu sm;
+	private SideMenuFragment menuFragment;
 
-	FrameLayout rightPane;
-	FrameLayout leftPane;
+	private FrameLayout rightPane;
+	private FrameLayout leftPane;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -144,18 +142,13 @@ public class HomeActivity extends SlidingFragmentActivity implements
 			toggle();
 			return true;
         case R.id.action_settings:
-        	showSettings();
+        	Intent intent = new Intent(this, SettingsActivity.class);
+        	startActivity(intent);
         	return true;
         default:
             return super.onOptionsItemSelected(item);
 		}
     }
-
-	private void showSettings() {
-		 getFragmentManager().beginTransaction()
-         .replace(R.id.left_pane, new SettingsFragment())
-         .addToBackStack(null).commit();
-	}
 
 	@Override
 	public ConnectionManager getConnectionManager() {

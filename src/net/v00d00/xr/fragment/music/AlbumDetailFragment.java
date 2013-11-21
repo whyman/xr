@@ -42,7 +42,6 @@ import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.Songid;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 
 import android.content.Context;
-import android.media.audiofx.AudioEffect.OnControlStatusChangeListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -50,7 +49,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -59,7 +57,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class AlbumDetailFragment extends AbstractXRFragment implements OnItemClickListener {
 
@@ -195,15 +192,18 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 
-		Log.d("MENU ITEM", item.toString());
-
-	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-	    int index = info.position;
-	    View view = info.targetView;
-
-	    PlaylistHandler.playAlbum(getConnectionManager(), new Albumid(album.albumid), 0);
-
-		return false;
+		switch (item.getItemId()) {
+		case R.id.album_context_play_album:
+			PlaylistHandler.playAlbum(getConnectionManager(), new Albumid(album.albumid), 0);
+			break;
+		case R.id.album_context_play_album_from_here:
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		    PlaylistHandler.playAlbum(getConnectionManager(), new Albumid(album.albumid), info.position);
+		    break;
+		default:
+			return super.onContextItemSelected(item);
+		}
+		return true;
 	}
 
 }
