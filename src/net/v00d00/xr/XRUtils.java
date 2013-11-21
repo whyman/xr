@@ -20,18 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package net.v00d00.xr;
 
-import java.util.List;
-
-import org.xbmc.android.jsonrpc.api.AbstractCall;
-import org.xbmc.android.jsonrpc.api.call.Player;
-import org.xbmc.android.jsonrpc.api.call.Player.GetActivePlayers;
-import org.xbmc.android.jsonrpc.api.call.Player.GetActivePlayers.GetActivePlayersResult;
-import org.xbmc.android.jsonrpc.api.model.ListModel;
-import org.xbmc.android.jsonrpc.api.model.ListModel.AllItems;
-import org.xbmc.android.jsonrpc.api.model.ListModel.BaseItem;
-import org.xbmc.android.jsonrpc.io.ApiCallback;
-import org.xbmc.android.jsonrpc.io.ConnectionManager;
-
 import android.content.Context;
 import android.content.res.Configuration;
 

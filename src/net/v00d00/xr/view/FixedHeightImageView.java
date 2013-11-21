@@ -22,7 +22,6 @@ package net.v00d00.xr.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 
 public class FixedHeightImageView extends ThumbnailView {
 
@@ -41,25 +40,14 @@ public class FixedHeightImageView extends ThumbnailView {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		Log.d("onMeasure", "Measure Width " + widthMeasureSpec);
-		Log.d("onMeasure", "Measure Height " + heightMeasureSpec);
-
 		if (getDrawable() != null) {
 
 			int imgW = getDrawable().getIntrinsicWidth();
 			int imgH = getDrawable().getIntrinsicHeight();
 
-			Log.d("onMeasure", "Width " + imgW);
-			Log.d("onMeasure", "Height " + imgH);
-
-
 			if (imgW != -1 && imgH != -1) {
 				float widthRatio = imgW / imgH;
-				Log.d("onMeasure", "Ratio: " + widthRatio);
-
 			    int height = MeasureSpec.getSize(heightMeasureSpec);
-			    Log.d("onMeasure", "view height is " + height);
-
 
 			    heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
 			    widthMeasureSpec = MeasureSpec.makeMeasureSpec((int)(height * widthRatio), MeasureSpec.EXACTLY);

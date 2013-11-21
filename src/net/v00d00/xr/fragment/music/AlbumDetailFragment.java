@@ -198,7 +198,7 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 			break;
 		case R.id.album_context_play_album_from_here:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		    PlaylistHandler.playAlbum(getConnectionManager(), new Albumid(album.albumid), info.position);
+		    PlaylistHandler.playAlbum(getConnectionManager(), new Albumid(album.albumid), info.position != 0 ? info.position - 1 : 0);
 		    break;
 		default:
 			return super.onContextItemSelected(item);
