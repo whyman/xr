@@ -31,12 +31,16 @@ import org.xbmc.android.jsonrpc.api.call.AudioLibrary.GetSongDetails;
 import org.xbmc.android.jsonrpc.api.call.Player;
 import org.xbmc.android.jsonrpc.api.call.Player.GetActivePlayers;
 import org.xbmc.android.jsonrpc.api.call.Player.GetActivePlayers.GetActivePlayersResult;
+import org.xbmc.android.jsonrpc.api.call.VideoLibrary.GetEpisodeDetails;
+import org.xbmc.android.jsonrpc.api.call.VideoLibrary.GetMovieDetails;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
 import org.xbmc.android.jsonrpc.api.model.ListModel;
 import org.xbmc.android.jsonrpc.api.model.ListModel.AllItems;
 import org.xbmc.android.jsonrpc.api.model.ListModel.BaseItem;
 import org.xbmc.android.jsonrpc.api.model.PlayerModel;
 import org.xbmc.android.jsonrpc.api.model.PlayerModel.Speed;
+import org.xbmc.android.jsonrpc.api.model.VideoModel.EpisodeDetail;
+import org.xbmc.android.jsonrpc.api.model.VideoModel.MovieDetail;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 import org.xbmc.android.jsonrpc.io.ConnectionManager.NotificationObserver;
 import org.xbmc.android.jsonrpc.notification.PlayerEvent;
@@ -52,11 +56,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -83,22 +85,9 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 	private class PlayingBarObserver extends PlayerObserver {
 		public void onPlay(Play notification) {
 			if (notification.data.item.type == PlayerEvent.Item.Type.SONG) {
-				GetSongDetails call = new GetSongDetails(notification.data.item.id, SongDetail.DISPLAYARTIST, SongDetail.THUMBNAIL, SongDetail.TITLE);
-
-				getConnectionManager().call(call, new ApiCallback<SongDetail>() {
-					@Override
-					public void onResponse(AbstractCall<SongDetail> call) {
-						SongDetail detail = call.getResult();
-						showNowPlaying(detail.title, detail.displayartist, detail.thumbnail);
-					}
-
-					@Override
-					public void onError(int code, String message, String hint) {
-						// TODO Auto-generated method stub
-
-					}
-
-				});
+				showSongPlaying(notification.data.item.id);
+			} else if (notification.data.item.type == PlayerEvent.Item.Type.MOVIE) {
+				showMoviePlaying(notification.data.item.id);
 			}
 		}
 		public void onPause(Pause notification) {
@@ -117,6 +106,66 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 		this.subtitle.setText(subtitle);
 		this.image.setThumbnailPath(image);
 		this.bigImage.setThumbnailPath(image);
+	}
+
+	private void showMoviePlaying(int id) {
+		GetMovieDetails call = new GetMovieDetails(id, MovieDetail.TAGLINE, MovieDetail.THUMBNAIL, MovieDetail.TITLE, MovieDetail.YEAR, MovieDetail.GENRE);
+		getConnectionManager().call(call, new ApiCallback<MovieDetail>() {
+			@Override
+			public void onResponse(AbstractCall<MovieDetail> call) {
+				showMoviePlaying(call.getResult());
+			}
+			@Override
+			public void onError(int code, String message, String hint) {
+				Log.d("ON_NOW_PLAYING_ERROR", message);
+			}
+		});
+	}
+
+	private void showMoviePlaying(MovieDetail detail) {
+		StringBuilder sb = new StringBuilder(detail.year);
+		if (detail.tagline != null) {
+			sb.append(" '");
+			sb.append(detail.tagline);
+			sb.append("'");
+		}
+		showNowPlaying(detail.title, sb.toString(), detail.thumbnail);
+	}
+
+	private void showSongPlaying(int id) {
+		GetSongDetails call = new GetSongDetails(id, SongDetail.DISPLAYARTIST, SongDetail.THUMBNAIL, SongDetail.TITLE);
+		getConnectionManager().call(call, new ApiCallback<SongDetail>() {
+			@Override
+			public void onResponse(AbstractCall<SongDetail> call) {
+				showSongPlaying(call.getResult());
+			}
+			@Override
+			public void onError(int code, String message, String hint) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+
+	private void showSongPlaying(SongDetail detail) {
+		showNowPlaying(detail.title, detail.displayartist, detail.thumbnail);
+	}
+
+	private void showTVPlaying(int id) {
+		GetEpisodeDetails call = new GetEpisodeDetails(id, EpisodeDetail.THUMBNAIL, EpisodeDetail.SHOWTITLE, EpisodeDetail.TITLE);
+		getConnectionManager().call(call, new ApiCallback<EpisodeDetail>() {
+			@Override
+			public void onResponse(AbstractCall<EpisodeDetail> call) {
+				showTVPlaying(call.getResult());
+			}
+			@Override
+			public void onError(int code, String message, String hint) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+
+	private void showTVPlaying(EpisodeDetail detail) {
+		showNowPlaying(detail.title, detail.showtitle, detail.thumbnail);
 	}
 
 	public PlayingBarFragment() {};
@@ -151,14 +200,9 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 			next.setOnClickListener(this);
 		}
 
-
-
-
 		// Make marquee mode work
 		title.setSelected(true);
 		subtitle.setSelected(true);
-
-
 
 		Activity activity = getActivity();
 		if (activity instanceof Provider)
@@ -177,12 +221,20 @@ public class PlayingBarFragment extends AbstractXRFragment implements Notificati
 			public void onResponse(AbstractCall<GetActivePlayersResult> call) {
 				List<GetActivePlayersResult> players = call.getResults();
 				for (GetActivePlayersResult player : players) {
-						Player.GetItem getSongItem = new Player.GetItem(player.playerid, BaseItem.TITLE, BaseItem.DISPLAYARTIST, BaseItem.THUMBNAIL);
-						getConnectionManager().call(getSongItem, new ApiCallback<ListModel.AllItems>() {
+						Player.GetItem getItem = new Player.GetItem(player.playerid);
+						getConnectionManager().call(getItem, new ApiCallback<ListModel.AllItems>() {
 							@Override
 							public void onResponse(AbstractCall<AllItems> call) {
-								AllItems items = call.getResult();
-								showNowPlaying(items.title, items.displayartist, items.thumbnail);
+								AllItems detail = call.getResult();
+								Log.d("Now playing type", detail.type);
+								if ("song".equals(detail.type))
+									showSongPlaying(detail.id);
+								else if ("movie".equals(detail.type))
+									showMoviePlaying(detail.id);
+								else if ("episode".equals(detail.type))
+									showTVPlaying(detail.id);
+								else
+									throw new RuntimeException("Unsupported type played");
 							}
 							@Override
 							public void onError(int code, String message, String hint) {

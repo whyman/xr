@@ -23,8 +23,6 @@ package net.v00d00.xr.view;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import com.squareup.picasso.Picasso;
-
 import net.v00d00.xr.R;
 import net.v00d00.xr.XRApplication;
 import android.content.Context;

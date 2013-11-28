@@ -60,7 +60,7 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 	private MovieListAdapter adapter;
 
 	public interface Provider extends ConnectionManagerProvider {
-		public void showAlbumListing(MovieDetail album);
+		public void showMovieDetail(MovieDetail movie);
 	}
 
 	public MovieListFragment() {}
@@ -182,7 +182,7 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
 
-		((Provider) getActivity()).showAlbumListing(detail);
+		((Provider) getActivity()).showMovieDetail(detail);
 	}
 
 }

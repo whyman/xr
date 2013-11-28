@@ -20,28 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package net.v00d00.xr.fragment.movies;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.v00d00.xr.R;
-import net.v00d00.xr.XRApplication;
 import net.v00d00.xr.fragment.AbstractXRFragment;
-import net.v00d00.xr.view.TrackView;
+import net.v00d00.xr.view.FixedHeightRatioImageView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
-import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
-import org.xbmc.android.jsonrpc.api.call.AudioLibrary.GetSongs.FilterAlbumId;
-import org.xbmc.android.jsonrpc.api.call.Player;
-import org.xbmc.android.jsonrpc.api.model.AudioModel;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
-import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item;
-import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.Songid;
+import org.xbmc.android.jsonrpc.api.call.VideoLibrary;
+import org.xbmc.android.jsonrpc.api.model.VideoModel;
+import org.xbmc.android.jsonrpc.api.model.VideoModel.MovieDetail;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -53,48 +41,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MovieDetailFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
 
-	private ListView trackList;
-	private AlbumAdapter adapter;
-	private AlbumDetail album;
+	private MovieDetail movie;
 
 	private View header;
-	private ImageView headerImg;
+	private FixedHeightRatioImageView headerImg;
 	private TextView headerArtist;
 	private TextView headerAlbum;
 
-	public void setAlbum(AlbumDetail album) {
-		this.album = album;
-		state = album;
+	public void setMovie(MovieDetail movie) {
+		this.movie = movie;
+		state = movie;
 	}
 
 	@Override
 	public void load() {
-		// create api call object
-		FilterAlbumId fa = new FilterAlbumId(album.albumid);
+		final VideoLibrary.GetMovieDetails call = new VideoLibrary.GetMovieDetails(
+				movie.movieid,
+				VideoModel.MovieFields.ART,
+				VideoModel.MovieFields.TITLE,
+				VideoModel.MovieFields.DIRECTOR,
+				VideoModel.MovieFields.MPAA,
+				VideoModel.MovieFields.RUNTIME);
 
-		final AudioLibrary.GetSongs call = new AudioLibrary.GetSongs(fa,
-				AudioModel.SongFields.ARTIST,
-				AudioModel.SongFields.TITLE,
-				AudioModel.SongFields.TRACK,
-				AudioModel.SongFields.DISPLAYARTIST,
-				AudioModel.SongFields.DURATION);
-
-		// execute				cm.call(new Play, callback)
-		getConnectionManager().call(call, new ApiCallback<SongDetail>() {
-		    public void onResponse(final AbstractCall<SongDetail> call) {
+		getConnectionManager().call(call, new ApiCallback<MovieDetail>() {
+		    public void onResponse(final AbstractCall<MovieDetail> call) {
 		    	getActivity().runOnUiThread(new Runnable() {
 		    		public void run() {
-				    	adapter.clear();
-				        adapter.addAll(call.getResults());
-				        adapter.notifyDataSetChanged();
+
 		    		}
 		    	});
 		    }
@@ -107,95 +84,30 @@ public class MovieDetailFragment extends AbstractXRFragment implements OnItemCli
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (savedInstanceState != null)
-			album = savedInstanceState.getParcelable(AbstractXRFragment.STATE_KEY);
-		if (adapter == null)
-			adapter = new AlbumAdapter(getActivity(), new ArrayList<SongDetail>());
-
-		if (trackList == null)
-			trackList = (ListView) inflater.inflate(R.layout.fragment_album, container, false);
+			movie = savedInstanceState.getParcelable(AbstractXRFragment.STATE_KEY);
 
 		if (header == null) {
-			header = inflater.inflate(R.layout.track_list_header, trackList, false);
-			headerImg = (ImageView) header.findViewById(R.id.album_cover);
+			header = inflater.inflate(R.layout.track_list_header, container, false);
+			headerImg = (FixedHeightRatioImageView) header.findViewById(R.id.album_cover);
 			headerArtist = (TextView) header.findViewById(R.id.album_artist);
 			headerAlbum = (TextView) header.findViewById(R.id.album_name);
-			trackList.addHeaderView(header);
 		}
 
-		headerArtist.setText(album.displayartist);
-		headerAlbum.setText(album.title);
+		headerArtist.setText(movie.mpaa);
+		headerAlbum.setText(movie.title);
+		headerImg.setThumbnailPath(movie.thumbnail);
 
-		trackList.setAdapter(adapter);
-		trackList.setOnItemClickListener(this);
-		registerForContextMenu(trackList);
-
-		try {
-			XRApplication.getApplication(getActivity()).getPicasso()
-				.load("http://192.168.1.100/image/" + URLEncoder.encode(album.thumbnail, "utf-8"))
-				.centerCrop()
-				.fit()
-				.placeholder(R.drawable.placeholder)
-				.into(headerImg);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		return trackList;
-	}
-
-	private static class AlbumAdapter extends ArrayAdapter<SongDetail> {
-		public AlbumAdapter(Context context, List<SongDetail> items) {
-			super(context, 0, items);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			TrackView view;
-			if (convertView == null) {
-				view = new TrackView(getContext());
-			} else {
-				view = (TrackView) convertView;
-			}
-
-			final SongDetail song = getItem(position);;
-			view.setTitle(song.title);
-			view.setArtist(song.displayartist);
-			view.setDuration(song.duration);
-			view.setTrackNumber(song.track);
-			return view;
-		}
+		return header;
 	}
 
 	@Override
 	public CharSequence getTitle() {
-		return album == null? "" : album.title;
+		return movie == null? "" : movie.title;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-		final SongDetail detail = adapter.getItem(pos - 1);
 
-		Context context = getActivity().getApplicationContext();
-		String text = "Track: " + Integer.toString(detail.track);
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
-
-		getConnectionManager().call(new Player.Open(new Item(new Songid(detail.songid))), new ApiCallback<String>() {
-
-			@Override
-			public void onResponse(AbstractCall<String> call) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onError(int code, String message, String hint) {
-				// TODO Auto-generated method stub
-
-			}
-		});
 	}
 
 	@Override

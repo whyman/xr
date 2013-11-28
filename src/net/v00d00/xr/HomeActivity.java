@@ -23,13 +23,16 @@ package net.v00d00.xr;
 import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.fragment.PlayingBarFragment;
 import net.v00d00.xr.fragment.SideMenuFragment;
+import net.v00d00.xr.fragment.movies.MovieDetailFragment;
 import net.v00d00.xr.fragment.movies.MovieFragment;
+import net.v00d00.xr.fragment.movies.MovieListFragment;
 import net.v00d00.xr.fragment.music.AlbumDetailFragment;
 import net.v00d00.xr.fragment.music.AlbumListFragment;
 import net.v00d00.xr.fragment.music.MusicFragment;
 import net.v00d00.xr.fragment.tv.TVFragment;
 
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
+import org.xbmc.android.jsonrpc.api.model.VideoModel.MovieDetail;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
 
 import android.app.ActionBar;
@@ -52,9 +55,10 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 public class HomeActivity extends SlidingFragmentActivity implements
 			AbstractXRFragment.ConnectionManagerProvider,
-			AlbumListFragment.Provider,
 			PlayingBarFragment.Provider,
-			SideMenuFragment.Provider {
+			SideMenuFragment.Provider,
+			AlbumListFragment.Provider,
+			MovieListFragment.Provider {
 
 	private SlidingUpPanelLayout layout;
 	private JsonRPC jsonrpc;
@@ -155,13 +159,6 @@ public class HomeActivity extends SlidingFragmentActivity implements
 		return jsonrpc.getConnectionManager();
 	}
 
-	@Override
-	public void showAlbumListing(AlbumDetail album) {
-		AlbumDetailFragment af = new AlbumDetailFragment();
-		af.setAlbum(album);
-		setRightPane(af);
-	}
-
 	private void setRightPane(AbstractXRFragment f) {
 
 		LinearLayout.LayoutParams params;
@@ -242,5 +239,19 @@ public class HomeActivity extends SlidingFragmentActivity implements
 	private void hideMenu() {
 		if (sm != null)
 			sm.showContent();
+	}
+
+	@Override
+	public void showAlbumListing(AlbumDetail album) {
+		AlbumDetailFragment af = new AlbumDetailFragment();
+		af.setAlbum(album);
+		setRightPane(af);
+	}
+
+	@Override
+	public void showMovieDetail(MovieDetail movie) {
+		MovieDetailFragment mf = new MovieDetailFragment();
+		mf.setMovie(movie);
+		setRightPane(mf);
 	}
 }
