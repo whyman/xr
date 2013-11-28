@@ -25,7 +25,6 @@ import java.util.List;
 
 import net.v00d00.xr.R;
 import net.v00d00.xr.fragment.AbstractXRFragment;
-import net.v00d00.xr.fragment.AbstractXRFragment.ConnectionManagerProvider;
 import net.v00d00.xr.view.CoverView;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
@@ -43,17 +42,16 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.Toast;
 
 public class AlbumListFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
 
@@ -182,15 +180,6 @@ public class AlbumListFragment extends AbstractXRFragment implements OnItemClick
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
 		AlbumDetail detail = adapter.getItem(pos);
-
-		Context context = getActivity().getApplicationContext();
-		String text = "Album Id: " + Integer.toString(detail.albumid);
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
-
 		((Provider) getActivity()).showAlbumListing(detail);
 	}
-
 }
