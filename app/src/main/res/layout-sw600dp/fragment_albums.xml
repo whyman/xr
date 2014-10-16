@@ -1,0 +1,16 @@
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".MovieListFragment"
+
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:id="@+id/album_grid"
+	android:verticalSpacing="4dp"
+	android:horizontalSpacing="4dp"
+	android:gravity="center"
+	android:numColumns="auto_fit"
+	android:isScrollContainer="true"
+	android:columnWidth="144dp"
+	android:stretchMode="columnWidth"
+    android:padding="4dp"
+/>

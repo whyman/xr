@@ -1,0 +1,13 @@
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context=".MovieDetailFragment"
+    android:layout_gravity="bottom"
+
+    android:gravity="center"
+    android:horizontalSpacing="1dp"
+    android:isScrollContainer="true"
+    android:verticalSpacing="1dp">
+</ListView>
