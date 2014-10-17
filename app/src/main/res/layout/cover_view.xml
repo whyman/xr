@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:scaleType="centerCrop"
-        android:padding="4dp"
     />
 
     <TextView
