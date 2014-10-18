@@ -33,8 +33,10 @@ import android.widget.TextView;
 
 import net.minidev.json.JSONObject;
 import net.v00d00.xr.AsyncCallback;
+import net.v00d00.xr.NullCallback;
 import net.v00d00.xr.R;
 import net.v00d00.xr.events.PlayEvent;
+import net.v00d00.xr.events.ServiceAvailableEvent;
 import net.v00d00.xr.events.StopEvent;
 import net.v00d00.xr.model.EpisodeDetail;
 import net.v00d00.xr.model.MovieDetail;
@@ -64,7 +66,6 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 	}
 
 	public void onEventMainThread(PlayEvent event) {
-
 		switch (event.type) {
 			case "song":
 				showSongPlaying(event.id);
@@ -74,8 +75,18 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 		}
 	}
 
-	private void onEventMainThread(StopEvent event) {
+	public void onEventMainThread(StopEvent event) {
 		showNowPlaying("", "", null);
+	}
+
+	public void onEventMainThread(ServiceAvailableEvent event) {
+		load();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		load();
 	}
 
 	private void showNowPlaying(String title, String subtitle, String image) {
@@ -218,90 +229,32 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 
 	@Override
 	protected void load() {
-
 		Log.d("PlayingBarFragment", "called onLoad");
 
-		requestData("Player.GetActivePlayers", new AsyncCallback() {
+		Map<String, Object> params = new HashMap<>();
+		params.put("properties", Arrays.asList("title", "displayartist", "thumbnail"));
+
+		onActivePlayer("Player.GetItem", params, new AsyncCallback() {
 			@Override
 			public void onSuccess(Object result) {
-				List<JSONObject> players = (List<JSONObject>) result;
+				JSONObject obj = (JSONObject) result;
+				Map<String, Object> item = (Map<String, Object>) obj.get("item");
 
-				for (JSONObject player : players) {
-					Long playerid = (Long) player.get("playerid");
-					Map<String, Object> params = new HashMap<>();
-					params.put("playerid", playerid);
-					params.put("properties", Arrays.asList("title", "displayartist", "thumbnail"));
-					requestData("Player.GetItem", params, new AsyncCallback() {
-						@Override
-						public void onSuccess(Object result) {
-							JSONObject obj = (JSONObject) result;
-							Map<String, Object> item = (Map<String, Object>) obj.get("item");
-
-							switch ((String) item.get("type")) {
-								case "unknown":
-									showNowPlaying((String) item.get("label"), "", (String) item.get("thumbnail"));
-									break;
-								default:
-									break;
-							}
-
-						}
-
-						@Override
-						public void onFailure(String error) {
-
-						}
-					});
-				}
-
-
-			}
-
-
-			@Override
-			public void onFailure(String error) {
-
-			}
-		});
-
-
-        /*
-		getConnectionManager().call(new Player.GetActivePlayers(), new ApiCallback<GetActivePlayers.GetActivePlayersResult>() {
-
-			@Override
-			public void onResponse(AbstractCall<GetActivePlayersResult> call) {
-				List<GetActivePlayersResult> players = call.getResults();
-				for (GetActivePlayersResult player : players) {
-						Player.GetItem getItem = new Player.GetItem(player.playerid);
-						getConnectionManager().call(getItem, new ApiCallback<ListModel.AllItems>() {
-							@Override
-							public void onResponse(AbstractCall<AllItems> call) {
-								AllItems detail = call.getResult();
-								Log.d("Now playing type", detail.type);
-								if ("song".equals(detail.type))
-									showSongPlaying(detail.id);
-								else if ("movie".equals(detail.type))
-									showMoviePlaying(detail.id);
-								else if ("episode".equals(detail.type))
-									showTVPlaying(detail.id);
-								else
-									throw new RuntimeException("Unsupported type played");
-							}
-							@Override
-							public void onError(int code, String message, String hint) {
-								// TODO Auto-generated method stub
-							}
-						});
+				switch ((String) item.get("type")) {
+					case "song":
+						showNowPlaying((String) item.get("label"), (String) item.get("displayartist"), (String) item.get("thumbnail"));
 						break;
-					}
+					case "unknown":
+						showNowPlaying((String) item.get("label"), "", (String) item.get("thumbnail"));
+						break;
+					default:
+						break;
+				}
 			}
 
 			@Override
-			public void onError(int code, String message, String hint) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(String error) {}
 		});
-		*/
 	}
 
 	@Override
@@ -311,68 +264,60 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 
 	@Override
 	public void onClick(View v) {
-		Log.d("onClick", v.toString());
-		Log.d("OnClick", Integer.toString(v.getId()));
-		if (v.getId() == R.id.now_playing_bar_pause)
-			doPlayerPause();
-		else if (v.getId() == R.id.now_playing_bar_next)
-			doPlayerNext();
+		switch (v.getId()) {
+			case R.id.now_playing_bar_pause:
+				doPlayerPause();
+				break;
+			case R.id.now_playing_bar_next:
+				doPlayerNext();
+				break;
+			case R.id.now_playing_bar_previous:
+				doPlayerPrevious();
+				break;
+		}
+	}
 
+	private void onActivePlayer(final String method) {
+		onActivePlayer(method, new HashMap<String, Object>(), new NullCallback());
+	}
+
+	private void onActivePlayer(final String method, Map<String, Object> params) {
+		onActivePlayer(method, params, new NullCallback());
+	}
+
+	private void onActivePlayer(final String method, final Map<String, Object> params, final AsyncCallback callback) {
+		requestData("Player.GetActivePlayers", new AsyncCallback() {
+			@Override
+			public void onSuccess(Object result) {
+				List<JSONObject> players = (List<JSONObject>) result;
+
+				for (JSONObject player : players) {
+					Long playerid = (Long) player.get("playerid");
+					params.put("playerid", playerid);
+					requestData(method, params, callback);
+				}
+			}
+
+			@Override
+			public void onFailure(String error) {
+
+			}
+		});
 	}
 
 	void doPlayerPause() {
-        /*
-		getConnectionManager().call(new Player.GetActivePlayers(), new ApiCallback<GetActivePlayers.GetActivePlayersResult>() {
-			@Override
-			public void onResponse(AbstractCall<GetActivePlayersResult> call) {
-				List<GetActivePlayersResult> players = call.getResults();
-				for (GetActivePlayersResult player : players) {
-					getConnectionManager().call(new Player.PlayPause(player.playerid), new ApiCallback<PlayerModel.Speed>() {
-						@Override
-						public void onResponse(AbstractCall<Speed> call) {
-							Log.d("PlayPause", "Call OK!");
-						}
-						@Override
-						public void onError(int code, String message,
-								String hint) {
-							Log.d("PlayPause", "Call Error!!");
-						}
-					});
-				}
-			}
-			@Override
-			public void onError(int code, String message, String hint) {
-				// TODO Auto-generated method stub
-			}
-		});
-		*/
+		onActivePlayer("Player.PlayPause");
 	}
 
 	void doPlayerNext() {
-        /*
-		getConnectionManager().call(new Player.GetActivePlayers(), new ApiCallback<GetActivePlayers.GetActivePlayersResult>() {
-			@Override
-			public void onResponse(AbstractCall<GetActivePlayersResult> call) {
-				List<GetActivePlayersResult> players = call.getResults();
-				for (GetActivePlayersResult player : players) {
-					getConnectionManager().call(new Player.GoTo(player.playerid, Player.GoTo.To.NEXT), new ApiCallback<String>() {
-						@Override
-						public void onResponse(AbstractCall<String> call) {
-							Log.d("Next", "Call OK!");
-						}
-						@Override
-						public void onError(int code, String message,
-								String hint) {
-							Log.d("PlayPause", "Call Error!!");
-						}
-					});
-				}
-			}
-			@Override
-			public void onError(int code, String message, String hint) {
-				// TODO Auto-generated method stub
-			}
-		});
-		*/
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("to", "next");
+		onActivePlayer("Player.GoTo", params);
+	}
+
+	void doPlayerPrevious() {
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("to", "next");
+		onActivePlayer("Player.GoTo", params);
 	}
 }
