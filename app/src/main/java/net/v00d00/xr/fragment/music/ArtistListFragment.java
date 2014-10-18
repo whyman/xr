@@ -23,6 +23,7 @@ package net.v00d00.xr.fragment.music;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +32,19 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.v00d00.xr.AsyncCallback;
 import net.v00d00.xr.R;
 import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.model.ArtistDetail;
 import net.v00d00.xr.view.CoverView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ArtistListFragment extends AbstractXRFragment {
 
@@ -81,26 +88,44 @@ public class ArtistListFragment extends AbstractXRFragment {
 
 	@Override
 	public void load() {
-        /*
-		// create api call object
-		final AudioLibrary.GetArtists call = new AudioLibrary.GetArtists(AudioModel.ArtistDetail.THUMBNAIL);
+		Log.d("Artists", "load called");
 
-		// execute
-		getConnectionManager().call(call, new ApiCallback<ArtistDetail>() {
-		    public void onResponse(final AbstractCall<ArtistDetail> call) {
-		    	getActivity().runOnUiThread(new Runnable() {
-		    		public void run() {
-				    	adapter.clear();
-				        adapter.addAll(call.getResults());
-				        adapter.notifyDataSetChanged();
-		    		}
-		    	});
-		    }
-		    public void onError(int code, String message, String hint) {
-		        Log.d("TEST", "Error " + code + ": " + message + hint);
-		    }
+		Map<String, Object> params = new HashMap<>();
+		params.put("properties", Arrays.asList("thumbnail"));
+		Map<String, Object> sort = new HashMap<>();
+		sort.put("order", "ascending");
+		sort.put("method", "artist");
+		params.put("sort", sort);
+
+		requestData("AudioLibrary.GetArtists", params, new AsyncCallback() {
+			@Override
+			public void onSuccess(Object result) {
+				Log.d("Artists", "success");
+				JSONObject obj = (JSONObject) result;
+				List<ArtistDetail> artists = new ArrayList<>();
+
+				JSONArray albums = (JSONArray) obj.get("artists");
+				for (Object artistObj : albums) {
+					Map<String, Object> album = (Map<String, Object>) artistObj;
+
+					ArtistDetail detail = new ArtistDetail();
+					detail.name = (String) album.get("label");
+					detail.id = (Long) album.get("artistid");
+					detail.thumbnail = (String) album.get("thumbnail");
+
+					artists.add(detail);
+				}
+
+				adapter.addAll(artists);
+				adapter.notifyDataSetChanged();
+
+			}
+
+			@Override
+			public void onFailure(String error) {
+
+			}
 		});
-	    */
 	}
 
 	private static class AlbumListAdapter extends ArrayAdapter<ArtistDetail> {
@@ -119,8 +144,8 @@ public class ArtistListFragment extends AbstractXRFragment {
 
 			final ArtistDetail artist = getItem(position);;
 			view.setPosition(position);
-			//view.setTitle(artist.artist);
-			//view.setThumbnailPath(artist.thumbnail);
+			view.setTitle(artist.name);
+			view.setThumbnailPath(artist.thumbnail);
 
 			return view;
 		}

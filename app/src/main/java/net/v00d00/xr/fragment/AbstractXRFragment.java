@@ -49,8 +49,9 @@ public abstract class AbstractXRFragment extends Fragment {
 
 	protected abstract void load();
 	public abstract CharSequence getTitle();
+
 	public boolean shouldLoad() {
-		return false;
+		return (state == null);
 	}
 
 	@Override
@@ -63,12 +64,14 @@ public abstract class AbstractXRFragment extends Fragment {
 	}
 
 	protected void maybeLoad() {
-		if (state == null) {
-			Log.d("AbstractXRFragment", "Empty state, calling load");
-			shouldLoad = true;
-		}
-		if (shouldLoad())
+		if (state == null)
+			Log.d("AbstractXRFragment", "Empty state");
+		if (shouldLoad()) {
+			Log.d("AbstractXRFragment", "Calling load");
 			load();
+		} else {
+			Log.d("AbstractXRFragment", "Not calling load.");
+		}
 	}
 
 	@Override

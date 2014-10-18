@@ -11,6 +11,7 @@
 	android:numColumns="auto_fit"
 	android:columnWidth="160dp"
 	android:stretchMode="columnWidth"
-    android:isScrollContainer="true"
-    android:padding="4dp"
+	android:isScrollContainer="true"
+	android:padding="4dp"
+	android:clipToPadding="false"
 />

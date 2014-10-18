@@ -166,7 +166,10 @@ public class HomeActivity extends FragmentActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			//toggle();
+			if (navigationDrawer.isDrawerVisible(GravityCompat.START))
+				navigationDrawer.closeDrawer(GravityCompat.START);
+			else
+				navigationDrawer.openDrawer(GravityCompat.START);
 			return true;
         case R.id.action_settings:
         	Intent intent = new Intent(this, SettingsActivity.class);

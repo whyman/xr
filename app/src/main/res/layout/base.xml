@@ -50,7 +50,7 @@
       android:id="@+id/navigation_drawer"
       android:layout_width="240dp"
       android:layout_height="match_parent"
-      android:background="@drawable/menu_bg"
+      android:background="@android:color/white"
       android:paddingLeft="8dp"
       android:paddingRight="8dp"
       android:layout_gravity="start" />
