@@ -180,7 +180,6 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 		headerArtist = (TextView) header.findViewById(R.id.album_artist);
 		headerAlbum = (TextView) header.findViewById(R.id.album_name);
 
-
 		trackList.setAdapter(adapter);
 		trackList.setOnItemClickListener(this);
 		registerForContextMenu(trackList);
@@ -194,6 +193,7 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 		headerImg.setThumbnailPath(album.thumbnail);
 		headerArtist.setText(album.displayartist);
 		headerAlbum.setText(album.title);
+		headerAlbum.setSelected(true); // They see me scrollin', they hatin'
 	}
 
 	private static class AlbumAdapter extends ArrayAdapter<SongDetail> {

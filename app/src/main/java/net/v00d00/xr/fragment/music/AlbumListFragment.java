@@ -95,6 +95,10 @@ public class AlbumListFragment extends AbstractXRFragment implements OnItemClick
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("properties", Arrays.asList("title", "thumbnail", "displayartist"));
+		Map<String, Object> sort = new HashMap<>();
+		sort.put("order", "ascending");
+		sort.put("method", "album");
+		params.put("sort", sort);
 
 		requestData("AudioLibrary.GetAlbums", params, new AsyncCallback() {
 			@Override
