@@ -63,4 +63,8 @@ public class CoverView extends RelativeLayout {
 	public void setPosition(int position) {
 		this.position = position;
 	}
+
+	public void setThumbnailAspect(float ratio) {
+		image.setAspectRatio(ratio);
+	}
 }

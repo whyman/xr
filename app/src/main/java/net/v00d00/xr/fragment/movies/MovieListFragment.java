@@ -37,13 +37,19 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.v00d00.xr.AsyncCallback;
 import net.v00d00.xr.R;
 import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.model.MovieDetail;
 import net.v00d00.xr.view.CoverView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MovieListFragment extends AbstractXRFragment implements OnItemClickListener, OnMenuItemClickListener {
 
@@ -79,29 +85,38 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 
 	@Override
 	public void load() {
-        /*
-		ListModel.Sort sort = new Sort(true, Method.TITLE, Order.ASCENDING);
 
-		// create api call object
-		final VideoLibrary.GetMovies call = new VideoLibrary.GetMovies(sort, VideoModel.MovieFields.TITLE, VideoModel.MovieFields.THUMBNAIL);
-
-		// execute
-		getConnectionManager().call(call, new ApiCallback<MovieDetail>() {
-		    public void onResponse(final AbstractCall<MovieDetail> call) {
-		    	getActivity().runOnUiThread(new Runnable() {
-		    		public void run() {
-				    	adapter.clear();
-				        adapter.addAll(call.getResults());
-				        adapter.notifyDataSetChanged();
-		    		}
-		    	});
-		    }
+		Map<String, Object> params = new HashMap<>();
+		params.put("properties", Arrays.asList("title", "thumbnail"));
+		requestData("VideoLibrary.GetMovies", params, new AsyncCallback() {
 			@Override
-			public void onError(int code, String message, String hint) {
-				// TODO Auto-generated method stub
+			public void onSuccess(Object result) {
+
+				JSONObject obj = (JSONObject) result;
+				List<MovieDetail> out = new ArrayList<>();
+
+				JSONArray movies = (JSONArray) obj.get("movies");
+				for (Object movieObj : movies) {
+					Map<String, Object> movie = (Map<String, Object>) movieObj;
+
+					MovieDetail detail = new MovieDetail();
+					detail.id = (Long) movie.get("id");
+					detail.title = (String) movie.get("label");
+					detail.thumbnail = (String) movie.get("thumbnail");
+
+					out.add(detail);
+				}
+
+				adapter.clear();
+				adapter.addAll(out);
+				adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void onFailure(String error) {
+
 			}
 		});
-		*/
 	}
 
 	private static class MovieListAdapter extends ArrayAdapter<MovieDetail> {
@@ -120,8 +135,9 @@ public class MovieListFragment extends AbstractXRFragment implements OnItemClick
 
 			final MovieDetail album = getItem(position);;
 			view.setPosition(position);
-			//view.setTitle(album.title);
-			//view.setThumbnailPath(album.thumbnail, 1.4f);
+			view.setTitle(album.title);
+			view.setThumbnailPath(album.thumbnail);
+			view.setThumbnailAspect(1.476f);
 
 			return view;
 		}
