@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.astuetz.PagerSlidingTabStrip;
+
 import net.v00d00.xr.R;
 import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.fragment.XRPagerAdapter;
@@ -42,6 +44,11 @@ public class MusicFragment extends Fragment {
 			adapter.setFragmentList(fl);
 		}
 		pager.setAdapter(adapter);
+
+		// Bind the tabs to the ViewPager
+		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
+		tabs.setShouldExpand(true);
+		tabs.setViewPager(pager);
 
 		return view;
 	}

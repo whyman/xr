@@ -8,6 +8,8 @@
 
     <color name="placeholderColor">#FFFAFAFA</color>
 
+	<color name="transparent">#00000000</color>
     <color name="pri300">#FF4fc3f7</color>
     <color name="pri700">#FF0288d1</color>
+	<color name="pri900">#FF01579b</color>
 </resources>

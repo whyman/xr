@@ -35,4 +35,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.3.4'
     compile 'com.thetransactioncompany:jsonrpc2-base:1.35'
     compile 'de.greenrobot:eventbus:2.2.1'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }

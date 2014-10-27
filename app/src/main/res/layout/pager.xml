@@ -1,26 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 	android:id="@+id/left_pane"
 	android:minWidth="360dp"
 	android:orientation="vertical">
+	
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="?android:attr/actionBarSize"
+		android:background="@color/pri700" />
+
+	<com.astuetz.PagerSlidingTabStrip
+		android:id="@+id/tabs"
+		android:layout_width="match_parent"
+		android:layout_height="48dip"
+		app:pstsShouldExpand="true"
+		app:pstsUnderlineColor="@color/pri900"
+		app:pstsIndicatorColor="@color/pri900"
+		app:pstsDividerColor="@color/pri900"
+		android:textColor="@android:color/white"
+		android:background="@color/pri700"
+		android:windowContentOverlay="@drawable/shadow"
+		/>
 
 	<android.support.v4.view.ViewPager
            android:id="@+id/pager"
            android:layout_width="match_parent"
            android:layout_height="match_parent">
 
-
-        <android.support.v4.view.PagerTabStrip
+        <!-- <android.support.v4.view.PagerTabStrip
             android:id="@+id/pager_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:background="@color/pri300"
+            android:background="@color/pri700"
+			android:minHeight="48dp"
             android:paddingBottom="4dp"
             android:paddingTop="4dp"
-            android:textColor="#fff" />
+            android:textColor="#fff" /> -->
 
     </android.support.v4.view.ViewPager>
 
