@@ -8,14 +8,13 @@
 
     <!-- The main content view -->
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".HomeActivity"
+		xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/pager_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background"
-        android:gravity="bottom">
+        android:gravity="bottom"
+		sothree:panelHeight="48dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,6 +52,7 @@
       android:background="@android:color/white"
       android:paddingLeft="8dp"
       android:paddingRight="8dp"
-      android:layout_gravity="start" />
+      android:layout_gravity="start"
+		android:layout_marginTop="?android:actionBarSize"/>
 
 </android.support.v4.widget.DrawerLayout>

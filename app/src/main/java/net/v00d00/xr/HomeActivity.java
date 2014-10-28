@@ -124,6 +124,7 @@ public class HomeActivity extends FragmentActivity implements
 			playingBarFragment = (PlayingBarFragment) getSupportFragmentManager().findFragmentById(R.id.bottom_pane);
 		}
 
+		layout.setPanelSlideListener(playingBarFragment);
 		navigationDrawer.setDrawerShadow(R.drawable.drop_shadow, GravityCompat.START);
 
 		ActionBar ab = getActionBar();

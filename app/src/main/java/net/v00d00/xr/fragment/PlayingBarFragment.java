@@ -31,6 +31,8 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
 import net.minidev.json.JSONObject;
 import net.v00d00.xr.AsyncCallback;
 import net.v00d00.xr.NullCallback;
@@ -49,7 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlayingBarFragment extends AbstractXRFragment implements OnClickListener {
+public class PlayingBarFragment extends AbstractXRFragment implements OnClickListener, SlidingUpPanelLayout.PanelSlideListener {
 
 	private RelativeLayout bar;
 	private TextView title;
@@ -319,5 +321,31 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 		HashMap<String, Object> params = new HashMap<>();
 		params.put("to", "next");
 		onActivePlayer("Player.GoTo", params);
+	}
+
+	@Override
+	public void onPanelSlide(View view, float v) {
+		bar.setAlpha(1.0f - v);
+	}
+
+	@Override
+	public void onPanelCollapsed(View view) {
+		Log.d("Panel", "Collapsed");
+	}
+
+	@Override
+	public void onPanelExpanded(View view) {
+		Log.d("Panel", "Expanded");
+	}
+
+	@Override
+	public void onPanelAnchored(View view) {
+		Log.d("Panel", "Anchored");
+
+	}
+
+	@Override
+	public void onPanelHidden(View view) {
+		Log.d("Panel", "Hidden");
 	}
 }

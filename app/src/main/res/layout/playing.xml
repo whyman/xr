@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
+    android:background="@color/pri700"
     android:orientation="vertical" >
 
 	    <RelativeLayout
-	        android:background="@color/background"
-	        android:layout_height="72dp"
+	        android:background="@color/pri700"
+	        android:layout_height="?android:actionBarSize"
 	        android:layout_width="match_parent"
 	        android:id="@+id/now_playing_bar"
 	        android:layout_weight="1">
@@ -31,6 +31,7 @@
 			    android:layout_toRightOf="@+id/now_playing_bar_img"
 				android:singleLine="true"
 				android:ellipsize="marquee"
+				android:textColor="@android:color/white"
 			    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 			<TextView
@@ -41,6 +42,7 @@
 			    android:layout_below="@+id/now_playing_bar_title"
 				android:singleLine="true"
 				android:ellipsize="marquee"
+				android:textColor="@android:color/white"
 			    android:textAppearance="?android:attr/textAppearanceSmall" />
 
 		</RelativeLayout>
@@ -48,8 +50,7 @@
 
 	<RelativeLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:background="@color/red" >
+	    android:layout_height="wrap_content">
 
 		<net.v00d00.xr.view.AspectRatioImageView
 		    android:id="@+id/now_playing_bar_img_big"
