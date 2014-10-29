@@ -43,8 +43,7 @@ import net.v00d00.xr.events.StopEvent;
 import net.v00d00.xr.model.EpisodeDetail;
 import net.v00d00.xr.model.MovieDetail;
 import net.v00d00.xr.model.SongDetail;
-import net.v00d00.xr.view.AspectRatioImageView;
-import net.v00d00.xr.view.FixedHeightImageView;
+import net.v00d00.xr.view.ThumbnailView;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,13 +54,16 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 
 	private RelativeLayout bar;
 	private TextView title;
-	private FixedHeightImageView image;
+	private ThumbnailView image;
 	private TextView subtitle;
-	private AspectRatioImageView bigImage;
+	private ThumbnailView bigImage;
 
 	private ImageButton prev;
 	private ImageButton pause;
 	private ImageButton next;
+
+	private TextView underImageTitle;
+	private TextView underImageSubtext;
 
 	public interface Provider {
 		public void setDragView(View view);
@@ -71,6 +73,9 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 		switch (event.type) {
 			case "song":
 				showSongPlaying(event.id);
+				break;
+			case "episode":
+				showTVPlaying(event.id);
 				break;
 			default:
 				break;
@@ -93,9 +98,13 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 
 	private void showNowPlaying(String title, String subtitle, String image) {
 		this.title.setText(title);
+		this.underImageTitle.setText(title);
+
 		this.subtitle.setText(subtitle);
-		this.image.setThumbnailPath(image);
-		this.bigImage.setThumbnailPath(image);
+		this.underImageSubtext.setText(subtitle);
+
+		this.image.setThumbnailPathNoFit(image);
+		this.bigImage.setThumbnailPathNoFit(image);
 	}
 
 	private void showMoviePlaying(int id) {
@@ -149,9 +158,7 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 			}
 
 			@Override
-			public void onFailure(String error) {
-
-			}
+			public void onFailure(String error) {}
 		});
 	}
 
@@ -159,24 +166,39 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 		showNowPlaying(detail.title, detail.displayartist, detail.thumbnail);
 	}
 
-	private void showTVPlaying(int id) {
-        /*
-		GetEpisodeDetails call = new GetEpisodeDetails(id, EpisodeDetail.THUMBNAIL, EpisodeDetail.SHOWTITLE, EpisodeDetail.TITLE);
-		getConnectionManager().call(call, new ApiCallback<EpisodeDetail>() {
+	private void showTVPlaying(long id) {
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("episodeid", id);
+		params.put("properties", Arrays.asList("thumbnail", "showtitle", "title", "season", "episode"));
+
+		requestData("VideoLibrary.GetEpisodeDetails", params, new AsyncCallback() {
 			@Override
-			public void onResponse(AbstractCall<EpisodeDetail> call) {
-				showTVPlaying(call.getResult());
+			public void onSuccess(Object result) {
+				Log.d("nowPlaying", result.toString());
+
+				EpisodeDetail episodeDetail = new EpisodeDetail();
+
+				Map<String, Object> outer = (Map<String, Object>) result;
+				Map<String, Object> details = (Map<String, Object>) outer.get("episodedetails");
+				episodeDetail.title = (String) details.get("title");
+				episodeDetail.showtitle = (String) details.get("showtitle");
+				episodeDetail.thumbnail = (String) details.get("thumbnail");
+				episodeDetail.season = (Long) details.get("season");
+				episodeDetail.episode = (Long) details.get("episode");
+
+				showTVPlaying(episodeDetail);
 			}
+
 			@Override
-			public void onError(int code, String message, String hint) {
-				// TODO Auto-generated method stub
+			public void onFailure(String error) {
 			}
 		});
-		*/
 	}
 
 	private void showTVPlaying(EpisodeDetail detail) {
-		//showNowPlaying(detail.title, detail.showtitle, detail.thumbnail);
+		String subtext = String.format("%s S%2dE%2d", detail.showtitle, detail.season, detail.episode);
+		showNowPlaying(detail.title, subtext, detail.thumbnail);
 	}
 
 	public PlayingBarFragment() {}
@@ -189,13 +211,13 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 		if (bar == null)
 			bar = (RelativeLayout) view.findViewById(R.id.now_playing_bar);
 		if (image == null)
-			image = (FixedHeightImageView) view.findViewById(R.id.now_playing_bar_img);
+			image = (ThumbnailView) view.findViewById(R.id.now_playing_bar_img);
 		if (title == null)
 			title = (TextView) view.findViewById(R.id.now_playing_bar_title);
 		if (subtitle == null)
 			subtitle = (TextView) view.findViewById(R.id.now_playing_bar_subtitle);
 		if (bigImage == null) {
-			bigImage = (AspectRatioImageView) view.findViewById(R.id.now_playing_bar_img_big);
+			bigImage = (ThumbnailView) view.findViewById(R.id.now_playing_bar_img_big);
 			bigImage.setOnClickListener(this);
 		}
 		if (prev == null) {
@@ -211,9 +233,16 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 			next.setOnClickListener(this);
 		}
 
+		if (underImageTitle == null)
+			underImageTitle = (TextView) view.findViewById(R.id.under_image_title);
+
+		if (underImageSubtext == null)
+			underImageSubtext = (TextView) view.findViewById(R.id.under_image_subtext);
+
 		// Make marquee mode work
 		title.setSelected(true);
 		subtitle.setSelected(true);
+		underImageTitle.setSelected(true);
 
 		Activity activity = getActivity();
 		if (activity instanceof Provider)
@@ -246,6 +275,8 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 					case "song":
 						showNowPlaying((String) item.get("label"), (String) item.get("displayartist"), (String) item.get("thumbnail"));
 						break;
+					case "episode":
+						showTVPlaying((Long) item.get("id"));
 					case "unknown":
 						showNowPlaying((String) item.get("label"), "", (String) item.get("thumbnail"));
 						break;
@@ -275,6 +306,9 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 				break;
 			case R.id.now_playing_bar_previous:
 				doPlayerPrevious();
+				break;
+			case R.id.now_playing_bar_img_big:
+				// TODO hide playing
 				break;
 		}
 	}
@@ -325,17 +359,23 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 
 	@Override
 	public void onPanelSlide(View view, float v) {
-		bar.setAlpha(1.0f - v);
+		float f = 1.0f - v;
+		title.setAlpha(f);
+		subtitle.setAlpha(f);
+		image.setAlpha(f);
 	}
 
 	@Override
 	public void onPanelCollapsed(View view) {
 		Log.d("Panel", "Collapsed");
+		bar.setVisibility(RelativeLayout.VISIBLE);
 	}
 
 	@Override
 	public void onPanelExpanded(View view) {
 		Log.d("Panel", "Expanded");
+		//Animation outTop = AnimationUtils.loadAnimation(getActivity(), R.anim.out_top);
+		bar.setVisibility(RelativeLayout.GONE);
 	}
 
 	@Override
@@ -348,4 +388,6 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 	public void onPanelHidden(View view) {
 		Log.d("Panel", "Hidden");
 	}
+
+
 }

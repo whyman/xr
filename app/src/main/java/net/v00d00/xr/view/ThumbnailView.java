@@ -81,6 +81,17 @@ public class ThumbnailView extends ImageView {
 		}
 	}
 
+	public void setThumbnailPathNoFit(String path) {
+		try {
+			XRApplication.getApplication(getContext()).getPicasso()
+					.load(getUriPrefix() + URLEncoder.encode(path, "utf-8"))
+					.placeholder(R.color.placeholderColor)
+					.into(this);
+		} catch (UnsupportedEncodingException e) {
+			Log.e("ThumbnailView", e.getMessage());
+		}
+	}
+
 	protected String getUriPrefix() {
 		if (uriPrefix == null) {
 			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());

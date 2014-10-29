@@ -2,37 +2,40 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/pri700"
-    android:orientation="vertical" >
+    android:background="@color/background"
+    android:orientation="vertical"
+	android:animateLayoutChanges="true"
+	>
 
-	    <RelativeLayout
-	        android:background="@color/pri700"
-	        android:layout_height="?android:actionBarSize"
-	        android:layout_width="match_parent"
-	        android:id="@+id/now_playing_bar"
-	        android:layout_weight="1">
+	<RelativeLayout
+		android:background="@color/pri700"
+		android:layout_height="?android:actionBarSize"
+		android:layout_width="match_parent"
+		android:id="@+id/now_playing_bar"
+		android:layout_weight="1">
 
-			<net.v00d00.xr.view.FixedHeightImageView
-			    android:id="@+id/now_playing_bar_img"
-			    android:layout_width="match_parent"
-			    android:layout_height="match_parent"
-			    android:layout_alignParentLeft="true"
-			    android:layout_alignParentTop="true"
-			    android:scaleType="centerInside"
-			    android:src="@drawable/placeholder" />
+			<net.v00d00.xr.view.ThumbnailView
+				android:id="@+id/now_playing_bar_img"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentTop="true"
+				android:scaleType="fitCenter"
+				android:adjustViewBounds="true"
+				android:src="@drawable/placeholder" />
 
 			<TextView
-			    android:id="@+id/now_playing_bar_title"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_alignParentTop="true"
-			    android:layout_marginLeft="8dp"
-			    android:layout_marginTop="6dp"
-			    android:layout_toRightOf="@+id/now_playing_bar_img"
+				android:id="@+id/now_playing_bar_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentTop="true"
+				android:layout_marginLeft="8dp"
+				android:layout_marginTop="6dp"
+				android:layout_toRightOf="@+id/now_playing_bar_img"
 				android:singleLine="true"
 				android:ellipsize="marquee"
 				android:textColor="@android:color/white"
-			    android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textAppearance="?android:attr/textAppearanceMedium" />
 
 			<TextView
 			    android:id="@+id/now_playing_bar_subtitle"
@@ -49,18 +52,54 @@
 
 
 	<RelativeLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content">
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
 
-		<net.v00d00.xr.view.AspectRatioImageView
-		    android:id="@+id/now_playing_bar_img_big"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    android:layout_alignParentTop="true"
-		    android:layout_marginTop="0dp"
-		    android:adjustViewBounds="true"
-		    android:scaleType="centerCrop"
-		    android:src="@drawable/placeholder" />
+		<net.v00d00.xr.view.ThumbnailView
+			android:id="@+id/now_playing_bar_img_big"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_marginTop="0dp"
+			android:adjustViewBounds="true"
+			android:scaleType="centerCrop"
+			android:src="@drawable/placeholder" />
+
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/under_image_title"
+			android:textSize="32sp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginStart="16dp"
+			android:layout_marginEnd="16dp"
+			android:layout_marginTop="8dp"
+			android:textColor="@android:color/primary_text_light"
+			android:fontFamily="sans-serif-light"
+			android:layout_below="@+id/now_playing_bar_img_big"
+			android:gravity="start"
+			android:singleLine="true"
+			android:scrollHorizontally="true"
+			android:ellipsize="marquee"
+			android:marqueeRepeatLimit="marquee_forever"
+			/>
+
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/under_image_subtext"
+			android:textSize="22sp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginStart="16dp"
+			android:layout_marginEnd="16dp"
+			android:layout_marginBottom="16dp"
+			android:textColor="@android:color/primary_text_light"
+			android:gravity="start"
+			android:layout_below="@id/under_image_title"
+			android:fontFamily="sans-serif-light"
+			/>
 
 	</RelativeLayout>
 
