@@ -22,12 +22,13 @@ GPLv3
 
 *Free Software, Fuck Yeah!*
 
-Screenshots (outdated)
+Screenshots
 -----------
 
-<img src="http://i.imgur.com/yAiKjYi.jpg" width="45%"/>
-&nbsp;&nbsp;
-<img src="http://i.imgur.com/KlNJKaz.png" width="45%"/>
+![Screenshot](https://raw.githubusercontent.com/v00d00/xr/screenshots/screens/Screenshot_2014-10-30-22-09-08.png)
+![Screenshot](https://raw.githubusercontent.com/v00d00/xr/screenshots/screens/Screenshot_2014-10-30-22-09-31.png)
+![Screenshot](https://raw.githubusercontent.com/v00d00/xr/screenshots/screens/Screenshot_2014-10-30-22-09-40.png)
+![Screenshot](https://raw.githubusercontent.com/v00d00/xr/screenshots/screens/Screenshot_2014-10-30-22-09-51.png)
 
   [Picasso]: http://square.github.io/picasso/
   [XBMC-jsonrpclib-android]: https://github.com/freezy/xbmc-jsonrpclib-android
