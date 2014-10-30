@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="red">#ffff0000</color>
-    <color name="green">#ff00ff00</color>
-    <color name="blue">#ff0000ff</color>
-    <color name="tint40">#b8000000</color>
-    <color name="background">#FFEEEEEE</color>
+	<color name="red">#ffff0000</color>
+	<color name="green">#ff00ff00</color>
+	<color name="blue">#ff0000ff</color>
+	<color name="tint40">#b8000000</color>
+	<color name="background">#FFEEEEEE</color>
 
-    <color name="placeholderColor">#FFFAFAFA</color>
+	<color name="placeholderColor">#FFFAFAFA</color>
 
 	<color name="transparent">#00000000</color>
-    <color name="pri300">#FF4fc3f7</color>
-    <color name="pri700">#FF0288d1</color>
-	<color name="pri900">#FF01579b</color>
+	<color name="pri300">#FFff8a65</color>
+	<color name="pri700">#FFe64a19</color>
+	<color name="pri900">#FFbf360c</color>
+
+	<color name="white87">#DEFFFFFF</color>
+	<color name="white54">#8AFFFFFF</color>
+
+	<color name="black87">#DE000000</color>
+	<color name="black54">#8A000000</color>
 </resources>
