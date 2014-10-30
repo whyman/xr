@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/background"
-    android:orientation="vertical"
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@color/background"
+	android:orientation="vertical"
 	android:animateLayoutChanges="true"
 	>
 
 	<RelativeLayout
 		android:background="@color/pri700"
-		android:layout_height="?android:actionBarSize"
+		android:layout_height="70dp"
 		android:layout_width="match_parent"
 		android:id="@+id/now_playing_bar"
-		android:layout_weight="1">
+		android:layout_alignParentTop="true">
 
 			<net.v00d00.xr.view.ThumbnailView
 				android:id="@+id/now_playing_bar_img"
@@ -22,20 +24,22 @@
 				android:layout_alignParentTop="true"
 				android:scaleType="fitCenter"
 				android:adjustViewBounds="true"
-				android:src="@drawable/placeholder" />
+				android:src="@drawable/placeholder"
+				android:layout_margin="8dp"
+			/>
 
 			<TextView
 				android:id="@+id/now_playing_bar_title"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentTop="true"
-				android:layout_marginLeft="8dp"
-				android:layout_marginTop="6dp"
+				android:layout_marginTop="12dp"
 				android:layout_toRightOf="@+id/now_playing_bar_img"
 				android:singleLine="true"
 				android:ellipsize="marquee"
-				android:textColor="@android:color/white"
-				android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textColor="@color/white87"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+			/>
 
 			<TextView
 			    android:id="@+id/now_playing_bar_subtitle"
@@ -45,15 +49,28 @@
 			    android:layout_below="@+id/now_playing_bar_title"
 				android:singleLine="true"
 				android:ellipsize="marquee"
-				android:textColor="@android:color/white"
-			    android:textAppearance="?android:attr/textAppearanceSmall" />
+				android:textColor="@color/white54"
+			    android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_marginTop="0dp"
+			/>
+
+			<ImageButton
+				style="@style/NowPlayingButton"
+				android:src="@drawable/apollo_holo_dark_pause"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true"
+				android:layout_gravity="center_vertical"
+				android:layout_marginRight="8dp"
+			/>
 
 		</RelativeLayout>
 
 
 	<RelativeLayout
+		android:id="@+id/now_playing_head"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:layout_below="@id/now_playing_bar">
 
 		<net.v00d00.xr.view.ThumbnailView
 			android:id="@+id/now_playing_bar_img_big"
@@ -106,7 +123,8 @@
 	<LinearLayout
 	    android:layout_height="70dp"
 	    android:layout_width="match_parent"
-		android:orientation="horizontal">
+		android:orientation="horizontal"
+		android:layout_below="@id/now_playing_head">
 	    <ImageButton
 		    android:id="@+id/now_playing_bar_previous"
 		    style="@style/NowPlayingButton"
@@ -123,4 +141,4 @@
 		    android:src="@drawable/apollo_holo_dark_next" />
 
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

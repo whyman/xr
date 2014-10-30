@@ -130,7 +130,7 @@ public class HomeActivity extends FragmentActivity implements
 		ActionBar ab = getActionBar();
 		if (ab != null){
 			ab.setDisplayHomeAsUpEnabled(true);
-			ab.setDisplayShowTitleEnabled(true);
+			ab.setDisplayShowTitleEnabled(false);
 		}
 	}
 

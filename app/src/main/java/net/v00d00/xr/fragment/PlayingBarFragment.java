@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package net.v00d00.xr.fragment;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -197,7 +198,7 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 	}
 
 	private void showTVPlaying(EpisodeDetail detail) {
-		String subtext = String.format("%s S%2dE%2d", detail.showtitle, detail.season, detail.episode);
+		String subtext = String.format("%s S%02dE%02d", detail.showtitle, detail.season, detail.episode);
 		showNowPlaying(detail.title, subtext, detail.thumbnail);
 	}
 
@@ -358,24 +359,30 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 	}
 
 	@Override
-	public void onPanelSlide(View view, float v) {
-		float f = 1.0f - v;
-		title.setAlpha(f);
-		subtitle.setAlpha(f);
-		image.setAlpha(f);
+	public void onPanelSlide(View view, float slideOffset) {
+		bigImage.setAlpha(slideOffset);
+		ActionBar bar = getActivity().getActionBar();
+		if (slideOffset > 0.7) {
+			if (bar.isShowing()) {
+				bar.hide();
+			}
+		} else {
+			if (!bar.isShowing()) {
+				bar.show();
+			}
+		}
 	}
 
 	@Override
 	public void onPanelCollapsed(View view) {
 		Log.d("Panel", "Collapsed");
-		bar.setVisibility(RelativeLayout.VISIBLE);
 	}
 
 	@Override
 	public void onPanelExpanded(View view) {
 		Log.d("Panel", "Expanded");
-		//Animation outTop = AnimationUtils.loadAnimation(getActivity(), R.anim.out_top);
-		bar.setVisibility(RelativeLayout.GONE);
+		if(getActivity().getActionBar().isShowing())
+			getActivity().getActionBar().hide();
 	}
 
 	@Override
