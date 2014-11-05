@@ -26,7 +26,7 @@ import android.content.Intent;
 
 import com.squareup.picasso.Picasso;
 
-import net.v00d00.xr.websocket.XRService;
+import net.v00d00.xr.services.WebsocketService;
 
 import java.util.concurrent.Executors;
 
@@ -43,7 +43,7 @@ public class XRApplication extends Application {
 				.indicatorsEnabled(true)
 				.build();
 
-		Intent intent = new Intent(this, XRService.class);
+		Intent intent = new Intent(this, WebsocketService.class);
 		startService(intent);
 	}
 

@@ -41,6 +41,7 @@ import net.minidev.json.JSONObject;
 import net.v00d00.xr.AsyncCallback;
 import net.v00d00.xr.R;
 import net.v00d00.xr.events.AlbumSelectedEvent;
+import net.v00d00.xr.events.DoAlbumPlayEvent;
 import net.v00d00.xr.fragment.AbstractXRFragment;
 import net.v00d00.xr.model.AlbumDetail;
 import net.v00d00.xr.model.SongDetail;
@@ -126,32 +127,6 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 
 			}
 		});
-
-        /*
-		// create api call object
-		FilterAlbumId fa = new FilterAlbumId(album.albumid);
-
-		final AudioLibrary.GetSongs call = new AudioLibrary.GetSongs(fa,
-				AudioModel.SongFields.ARTIST,
-				AudioModel.SongFields.TITLE,
-				AudioModel.SongFields.TRACK,
-				AudioModel.SongFields.DISPLAYARTIST,
-				AudioModel.SongFields.DURATION);
-
-		// execute				cm.call(new Play, callback)
-		getConnectionManager().call(call, new ApiCallback<SongDetail>() {
-		    public void onResponse(final AbstractCall<SongDetail> call) {
-		    	getActivity().runOnUiThread(new Runnable() {
-		    		public void run() {
-
-		    		}
-		    	});
-		    }
-		    public void onError(int code, String message, String hint) {
-		        Log.d("TEST", "Error " + code + ": " + message);
-		    }
-		});
-		*/
 	}
 
 	@Override
@@ -225,7 +200,12 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+	public void onItemClick(AdapterView<?> arg0, View view, int pos, long id) {
+
+		if (pos == 0) {
+			return;
+		}
+
 		final SongDetail detail = adapter.getItem(pos - 1);
 
 		//PlaylistHandler.playAlbum(album.id, 0);
@@ -235,17 +215,7 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 		songitem.put("songid", detail.id);
 		params.put("item", songitem);
 
-		requestData("Player.Open", params, new AsyncCallback() {
-			@Override
-			public void onSuccess(Object result) {
-
-			}
-
-			@Override
-			public void onFailure(String error) {
-
-			}
-		});
+		requestData("Player.Open", params);
 	}
 
 	@Override
@@ -258,20 +228,17 @@ public class AlbumDetailFragment extends AbstractXRFragment implements OnItemCli
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-        /*
 		switch (item.getItemId()) {
 		case R.id.album_context_play_album:
-			PlaylistHandler.playAlbum(getConnectionManager(), new Albumid(album.albumid), 0);
+			eventBus.post(new DoAlbumPlayEvent(album.id));
 			break;
 		case R.id.album_context_play_album_from_here:
-			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		    PlaylistHandler.playAlbum(getConnectionManager(), new Albumid(album.albumid), info.position != 0 ? info.position - 1 : 0);
-		    break;
+			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+			eventBus.post(new DoAlbumPlayEvent(album.id, info.position != 0 ? info.position - 1 : 0));
+			break;
 		default:
-		    */
 			return super.onContextItemSelected(item);
-		//}
-		//return true;
+		}
+		return false;
 	}
-
 }

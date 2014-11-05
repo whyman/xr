@@ -1,19 +1,19 @@
 package net.v00d00.xr.events;
 
-import net.v00d00.xr.websocket.XRService;
+import net.v00d00.xr.services.WebsocketService;
 
 /**
  * Created by ian on 09/10/14.
  */
 public class ServiceAvailableEvent {
 
-	private XRService service;
+	private WebsocketService service;
 
-	public ServiceAvailableEvent(XRService service) {
+	public ServiceAvailableEvent(WebsocketService service) {
 		this.service = service;
 	}
 
-	public XRService getService() {
+	public WebsocketService getService() {
 		return service;
 	}
 }

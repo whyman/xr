@@ -1,4 +1,4 @@
-package net.v00d00.xr.websocket;
+package net.v00d00.xr.services;
 
 import android.app.Service;
 import android.content.Intent;
@@ -23,14 +23,14 @@ import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
-public class XRService extends Service {
+public class WebsocketService extends Service {
 
 	EventBus eventBus;
 	WebSocket socket;
 
 	public class LocalBinder extends Binder {
-		public XRService getService() {
-			return XRService.this;
+		public WebsocketService getService() {
+			return WebsocketService.this;
 		}
 	}
 

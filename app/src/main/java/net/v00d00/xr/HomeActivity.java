@@ -57,7 +57,8 @@ import net.v00d00.xr.fragment.music.MusicFragment;
 import net.v00d00.xr.fragment.tv.TVFragment;
 import net.v00d00.xr.model.AlbumDetail;
 import net.v00d00.xr.model.MovieDetail;
-import net.v00d00.xr.websocket.XRService;
+import net.v00d00.xr.services.PlaylistService;
+import net.v00d00.xr.services.WebsocketService;
 
 import de.greenrobot.event.EventBus;
 
@@ -67,13 +68,25 @@ public class HomeActivity extends FragmentActivity implements
 			AlbumListFragment.Provider,
 			MovieListFragment.Provider {
 
-	private ServiceConnection serviceConnection = new ServiceConnection() {
+	private ServiceConnection websocketServiceConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			XRService.LocalBinder binder = (XRService.LocalBinder) service;
-			xrService = binder.getService();
-			isBound = true;
-			eventBus.post(new ServiceAvailableEvent(xrService));
+			WebsocketService.LocalBinder binder = (WebsocketService.LocalBinder) service;
+			websocketService = binder.getService();
+			eventBus.post(new ServiceAvailableEvent(websocketService));
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			isBound = false;
+		}
+	};
+
+	private ServiceConnection playlistServiceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			PlaylistService.LocalBinder binder = (PlaylistService.LocalBinder) service;
+			playlistService = binder.getService();
 		}
 
 		@Override
@@ -83,7 +96,8 @@ public class HomeActivity extends FragmentActivity implements
 	};
 
 	private EventBus eventBus;
-	private XRService xrService;
+	private WebsocketService websocketService;
+	private PlaylistService playlistService;
 	private boolean isBound = false;
 
 	private SlidingUpPanelLayout layout;
@@ -141,8 +155,11 @@ public class HomeActivity extends FragmentActivity implements
 		eventBus = EventBus.getDefault();
 		eventBus.register(this);
 
-		Intent intent = new Intent(this, XRService.class);
-		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+		/* Start the services */
+		Intent websocketIntent = new Intent(this, WebsocketService.class);
+		bindService(websocketIntent, websocketServiceConnection, Context.BIND_AUTO_CREATE);
+		Intent playlistIntent = new Intent(this, PlaylistService.class);
+		bindService(playlistIntent, playlistServiceConnection, BIND_AUTO_CREATE);
 	}
 
 	@Override

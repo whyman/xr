@@ -106,6 +106,12 @@ public abstract class AbstractXRFragment extends Fragment {
 		eventBus.post(new RequestEvent(id, method, namedParams));
 	}
 
+	protected void requestData(String method, Map<String, Object> namedParams) {
+		String id = UUID.randomUUID().toString();
+		Log.d("requestData", eventBus.toString());
+		eventBus.post(new RequestEvent(id, method, namedParams));
+	}
+
 	public void onEventMainThread(RequestCompleteEvent event) {
 		if (event != null && event.id != null && myRequests.containsKey(event.id)) {
 			AsyncCallback cb = myRequests.get(event.id);
