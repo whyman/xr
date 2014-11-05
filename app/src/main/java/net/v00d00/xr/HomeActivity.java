@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package net.v00d00.xr;
 
-import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -28,11 +27,12 @@ import android.content.ServiceConnection;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -62,7 +62,7 @@ import net.v00d00.xr.services.WebsocketService;
 
 import de.greenrobot.event.EventBus;
 
-public class HomeActivity extends FragmentActivity implements
+public class HomeActivity extends ActionBarActivity implements
 			PlayingBarFragment.Provider,
 			SideMenuFragment.Provider,
 			AlbumListFragment.Provider,
@@ -141,11 +141,8 @@ public class HomeActivity extends FragmentActivity implements
 		layout.setPanelSlideListener(playingBarFragment);
 		navigationDrawer.setDrawerShadow(R.drawable.drop_shadow, GravityCompat.START);
 
-		ActionBar ab = getActionBar();
-		if (ab != null){
-			ab.setDisplayHomeAsUpEnabled(true);
-			ab.setDisplayShowTitleEnabled(false);
-		}
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 	}
 
 	@Override

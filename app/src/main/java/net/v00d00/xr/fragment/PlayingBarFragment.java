@@ -362,13 +362,15 @@ public class PlayingBarFragment extends AbstractXRFragment implements OnClickLis
 	public void onPanelSlide(View view, float slideOffset) {
 		bigImage.setAlpha(slideOffset);
 		ActionBar bar = getActivity().getActionBar();
-		if (slideOffset > 0.7) {
-			if (bar.isShowing()) {
-				bar.hide();
-			}
-		} else {
-			if (!bar.isShowing()) {
-				bar.show();
+		if (bar != null) {
+			if (slideOffset > 0.7) {
+				if (bar.isShowing()) {
+					bar.hide();
+				}
+			} else {
+				if (!bar.isShowing()) {
+					bar.show();
+				}
 			}
 		}
 	}
